@@ -12,8 +12,9 @@ Distributed under the Boost Software License, Version 1.0.
 
 // Instances
 #include <boost/hana/foreign/comparable.hpp>
-#include <boost/hana/foreign/orderable.hpp>
 #include <boost/hana/foreign/logical.hpp>
+#include <boost/hana/foreign/orderable.hpp>
+#include <boost/hana/foreign/printable.hpp>
 
 #include <boost/hana/foreign/monoid.hpp>
 #include <boost/hana/foreign/group.hpp>

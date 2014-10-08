@@ -48,6 +48,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/monad.hpp>
 #include <boost/hana/monoid.hpp>
 #include <boost/hana/orderable.hpp>
+#include <boost/hana/printable.hpp>
 #include <boost/hana/product.hpp>
 #include <boost/hana/record.hpp>
 #include <boost/hana/ring.hpp>

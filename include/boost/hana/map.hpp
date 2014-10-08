@@ -15,6 +15,7 @@ Distributed under the Boost Software License, Version 1.0.
 
 // Instances
 #include <boost/hana/map/comparable.hpp>
+#include <boost/hana/map/printable.hpp>
 #include <boost/hana/map/searchable.hpp>
 
 #endif // !BOOST_HANA_MAP_HPP

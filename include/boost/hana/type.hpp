@@ -15,5 +15,6 @@ Distributed under the Boost Software License, Version 1.0.
 
 // Instances
 #include <boost/hana/type/comparable.hpp>
+#include <boost/hana/type/printable.hpp>
 
 #endif // !BOOST_HANA_TYPE_HPP
