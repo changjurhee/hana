@@ -13,6 +13,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/fwd/orderable.hpp>
 
 #include <boost/hana/bool.hpp>
+#include <boost/hana/config.hpp>
 #include <boost/hana/constant.hpp>
 #include <boost/hana/core/common.hpp>
 #include <boost/hana/core/convert.hpp>
@@ -260,6 +261,7 @@ namespace boost { namespace hana {
                 f(detail::std::forward<Y>(y))
             );
         }
+#ifndef BOOST_HANA_CONFIG_CONSTEXPR_MEMBER_FUNCTION_IS_CONST
         template <typename X, typename Y>
         constexpr decltype(auto) operator()(X&& x, Y&& y) & {
             return hana::less(
@@ -267,6 +269,7 @@ namespace boost { namespace hana {
                 f(detail::std::forward<Y>(y))
             );
         }
+#endif
     };
 
     //////////////////////////////////////////////////////////////////////////
@@ -300,7 +303,7 @@ namespace boost { namespace hana {
         static constexpr auto apply(X x, Y y) {
             constexpr auto less = hana::less(hana::value(x), hana::value(y));
             constexpr bool truth_value = hana::if_(less, true, false);
-            return bool_<truth_value>;
+            return _bool<truth_value>{};
         }
     };
 

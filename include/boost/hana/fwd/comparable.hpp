@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_COMPARABLE_HPP
 #define BOOST_HANA_FWD_COMPARABLE_HPP
 
+#include <boost/hana/config.hpp>
 #include <boost/hana/core/datatype.hpp>
 #include <boost/hana/core/operators.hpp>
 #include <boost/hana/detail/create.hpp>
@@ -351,10 +352,12 @@ namespace boost { namespace hana {
     constexpr detail::create<_comparing> comparing{};
 #endif
 
-    template <>
-    struct operators::of<Comparable>
-        : decltype(equal), decltype(not_equal)
-    { };
+    namespace operators {
+        template <>
+        struct of<Comparable>
+            : decltype(equal), decltype(not_equal)
+        { };
+    }
 }} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_COMPARABLE_HPP

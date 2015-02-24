@@ -15,6 +15,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/applicative.hpp>
 #include <boost/hana/bool.hpp>
 #include <boost/hana/comparable.hpp>
+#include <boost/hana/config.hpp>
 #include <boost/hana/core/operators.hpp>
 #include <boost/hana/detail/std/forward.hpp>
 #include <boost/hana/detail/std/move.hpp>
@@ -63,9 +64,11 @@ namespace boost { namespace hana {
         constexpr decltype(auto) go(F const&, G&& g) const&
         { return detail::std::forward<G>(g)(value); }
 
+#ifndef BOOST_HANA_CONFIG_CONSTEXPR_MEMBER_FUNCTION_IS_CONST
         template <typename F, typename G>
         constexpr decltype(auto) go(F const&, G&& g) &
         { return detail::std::forward<G>(g)(value); }
+#endif
 
         template <typename F, typename G>
         constexpr decltype(auto) go(F const&, G&& g) &&
@@ -75,10 +78,12 @@ namespace boost { namespace hana {
     //////////////////////////////////////////////////////////////////////////
     // Operators
     //////////////////////////////////////////////////////////////////////////
-    template <>
-    struct operators::of<Either>
-        : operators::of<Comparable, Orderable, Monad>
-    { };
+    namespace operators {
+        template <>
+        struct of<Either>
+            : operators::of<Comparable, Orderable, Monad>
+        { };
+    }
 
     //////////////////////////////////////////////////////////////////////////
     // Comparable
@@ -90,8 +95,8 @@ namespace boost { namespace hana {
         { return hana::equal(x.value, y.value); }
 
         template <typename X, typename Y>
-        static constexpr auto apply(X const&, Y const&)
-        { return false_; }
+        static constexpr _bool<false> apply(X const&, Y const&)
+        { return {}; }
     };
 
     //////////////////////////////////////////////////////////////////////////
@@ -104,12 +109,12 @@ namespace boost { namespace hana {
         { return hana::less(x.value, y.value); }
 
         template <typename T, typename U>
-        static constexpr auto apply(_left<T> const&, _right<U> const&)
-        { return true_; }
+        static constexpr _bool<true> apply(_left<T> const&, _right<U> const&)
+        { return {}; }
 
         template <typename T, typename U>
-        static constexpr auto apply(_right<T> const&, _left<U> const&)
-        { return false_; }
+        static constexpr _bool<false> apply(_right<T> const&, _left<U> const&)
+        { return {}; }
     };
 
     //////////////////////////////////////////////////////////////////////////

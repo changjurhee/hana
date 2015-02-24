@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_MONOID_HPP
 #define BOOST_HANA_FWD_MONOID_HPP
 
+#include <boost/hana/config.hpp>
 #include <boost/hana/core/datatype.hpp>
 #include <boost/hana/core/operators.hpp>
 #include <boost/hana/detail/std/forward.hpp>
@@ -178,14 +179,22 @@ namespace boost { namespace hana {
         { return zero_impl<M>::apply(); }
     };
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <typename M>
     constexpr _zero<M> zero{};
+#else
+    template <typename M>
+    constexpr decltype(auto) zero()
+    { return _zero<M>{}(); }
+#endif
 #endif
 
-    template <>
-    struct operators::of<Monoid>
-        : decltype(plus)
-    { };
+    namespace operators {
+        template <>
+        struct of<Monoid>
+            : decltype(plus)
+        { };
+    }
 }} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_MONOID_HPP

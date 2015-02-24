@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_CORE_IS_A_HPP
 #define BOOST_HANA_CORE_IS_A_HPP
 
+#include <boost/hana/config.hpp>
 #include <boost/hana/core/datatype.hpp>
 #include <boost/hana/core/models.hpp>
 #include <boost/hana/detail/std/integral_constant.hpp>
@@ -68,7 +69,7 @@ namespace boost { namespace hana {
 #ifdef BOOST_HANA_DOXYGEN_INVOKED
     template <typename Typeclass, typename ...Datatypes>
     constexpr auto is_a = unspecified;
-#else
+#elif defined(BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES)
     namespace core_detail {
         template <typename T> struct novoid { using type = T; };
         template <>           struct novoid<void> { struct type; };
@@ -107,6 +108,7 @@ namespace boost { namespace hana {
     constexpr core_detail::is_a_helper<Typeclass> is_a<Typeclass>{};
 #endif
 
+#if defined(BOOST_HANA_DOXYGEN_INVOKED) || defined(BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES)
     //! @ingroup group-core
     //! Equivalent to `is_a`; provided for consistency with the rules of the
     //! English language.
@@ -118,6 +120,7 @@ namespace boost { namespace hana {
     //! English language when several data types are provided.
     template <typename Typeclass, typename ...Datatypes>
     constexpr auto are = decltype(is_a<Typeclass, Datatypes...>){};
+#endif
 }} // end namespace boost::hana
 
 #endif // !BOOST_HANA_CORE_IS_A_HPP

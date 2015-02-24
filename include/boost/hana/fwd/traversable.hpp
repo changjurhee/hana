@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_TRAVERSABLE_HPP
 #define BOOST_HANA_FWD_TRAVERSABLE_HPP
 
+#include <boost/hana/config.hpp>
 #include <boost/hana/core/datatype.hpp>
 #include <boost/hana/detail/std/forward.hpp>
 
@@ -118,8 +119,15 @@ namespace boost { namespace hana {
         }
     };
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <typename A>
     constexpr _sequence<A> sequence{};
+#else
+    template <typename A, typename T>
+    constexpr decltype(auto) sequence(T&& traversable) {
+        return _sequence<A>{}(detail::std::forward<T>(traversable));
+    }
+#endif
 #endif
 
     //! Map each element of a structure to an `Applicative`, and then do
@@ -165,8 +173,16 @@ namespace boost { namespace hana {
         }
     };
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <typename A>
     constexpr _traverse<A> traverse{};
+#else
+    template <typename A, typename T, typename F>
+    constexpr decltype(auto) traverse(T&& traversable, F&& f) {
+        return _traverse<A>{}(detail::std::forward<T>(traversable),
+                              detail::std::forward<F>(f));
+    }
+#endif
 #endif
 }} // end namespace boost::hana
 

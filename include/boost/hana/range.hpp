@@ -73,10 +73,12 @@ namespace boost { namespace hana {
     //////////////////////////////////////////////////////////////////////////
     // Operators
     //////////////////////////////////////////////////////////////////////////
-    template <>
-    struct operators::of<Range>
-        : operators::of<Comparable, Iterable>
-    { };
+    namespace operators {
+        template <>
+        struct of<Range>
+            : operators::of<Comparable, Iterable>
+        { };
+    }
 
     //////////////////////////////////////////////////////////////////////////
     // Comparable
@@ -85,10 +87,10 @@ namespace boost { namespace hana {
     struct equal_impl<Range, Range> {
         template <typename R1, typename R2>
         static constexpr auto apply(R1, R2) {
-            return bool_<
+            return _bool<
                 (R1::from == R1::to && R2::from == R2::to) ||
                 (R1::from == R2::from && R1::to == R2::to)
-            >;
+            >{};
         }
     };
 
@@ -102,7 +104,7 @@ namespace boost { namespace hana {
         unpack_helper(R r, F&& f, detail::std::integer_sequence<T, v...>) {
             using U = typename R::underlying;
             return detail::std::forward<F>(f)(
-                to<U>(integral_constant<T, R::from + v>)...
+                to<U>(_integral_constant<T, R::from + v>{})...
             );
         }
 
@@ -118,7 +120,7 @@ namespace boost { namespace hana {
     struct length_impl<Range> {
         template <typename R>
         static constexpr auto apply(R)
-        { return size_t<R::to - R::from>; }
+        { return _size_t<R::to - R::from>{}; }
     };
 
     template <>
@@ -126,7 +128,7 @@ namespace boost { namespace hana {
         template <typename R>
         static constexpr auto apply(R) {
             using U = typename R::underlying;
-            return hana::to<U>(integral_constant<decltype(R::from), R::from>);
+            return hana::to<U>(_integral_constant<decltype(R::from), R::from>{});
         }
     };
 
@@ -135,7 +137,7 @@ namespace boost { namespace hana {
         template <typename R>
         static constexpr auto apply(R r) {
             using U = typename R::underlying;
-            return hana::to<U>(integral_constant<decltype(R::to-1), R::to-1>);
+            return hana::to<U>(_integral_constant<decltype(R::to-1), R::to-1>{});
         }
     };
 
@@ -170,7 +172,7 @@ namespace boost { namespace hana {
             constexpr auto from = R::from;
             constexpr auto to = R::to;
             constexpr auto s = from == to ? 0 : sum_helper(from, to-1);
-            return hana::to<U>(integral_constant<decltype(s), s>);
+            return hana::to<U>(_integral_constant<decltype(s), s>{});
         }
     };
 
@@ -193,7 +195,7 @@ namespace boost { namespace hana {
         static constexpr auto apply(R) {
             using U = typename R::underlying;
             constexpr auto p = product_helper(R::from, R::to);
-            return hana::to<U>(integral_constant<decltype(p), p>);
+            return hana::to<U>(_integral_constant<decltype(p), p>{});
         }
     };
 
@@ -248,7 +250,7 @@ namespace boost { namespace hana {
         static constexpr auto apply(R) {
             using U = typename R::underlying;
             constexpr auto from = R::from;
-            return hana::to<U>(integral_constant<decltype(from), from>);
+            return hana::to<U>(_integral_constant<decltype(from), from>{});
         }
     };
 
@@ -265,7 +267,7 @@ namespace boost { namespace hana {
     struct is_empty_impl<Range> {
         template <typename R>
         static constexpr auto apply(R)
-        { return bool_<R::from == R::to>; }
+        { return _bool<R::from == R::to>{}; }
     };
 
     template <>
@@ -275,7 +277,7 @@ namespace boost { namespace hana {
             using U = typename R::underlying;
             constexpr auto n = hana::value(n_);
             constexpr auto from = R::from;
-            return to<U>(integral_constant<decltype(from + n), from + n>);
+            return to<U>(_integral_constant<decltype(from + n), from + n>{});
         }
     };
 
@@ -285,7 +287,7 @@ namespace boost { namespace hana {
         static constexpr auto apply(R r) {
             using U = typename R::underlying;
             constexpr auto to = R::to;
-            return hana::to<U>(integral_constant<decltype(to-1), to-1>);
+            return hana::to<U>(_integral_constant<decltype(to-1), to-1>{});
         }
     };
 

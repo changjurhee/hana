@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_INTEGRAL_CONSTANT_HPP
 #define BOOST_HANA_FWD_INTEGRAL_CONSTANT_HPP
 
+#include <boost/hana/config.hpp>
 #include <boost/hana/core/operators.hpp>
 #include <boost/hana/detail/std/size_t.hpp>
 
@@ -221,9 +222,50 @@ namespace boost { namespace hana {
         static constexpr ic_detail::_times<T, v> times{};
     };
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <typename T, T v>
     constexpr _integral_constant<T, v> integral_constant{};
 #endif
+#endif
+
+    template <bool b>
+    using _bool = _integral_constant<bool, b>;
+
+    using _true = _bool<true>;
+
+    using _false = _bool<false>;
+
+    template <char c>
+    using _char = _integral_constant<char, c>;
+
+    template <short i>
+    using _short = _integral_constant<short, i>;
+
+    template <unsigned short i>
+    using _ushort = _integral_constant<unsigned short, i>;
+
+    template <int i>
+    using _int = _integral_constant<int, i>;
+
+    template <unsigned int i>
+    using _uint = _integral_constant<unsigned int, i>;
+
+    template <long i>
+    using _long = _integral_constant<long, i>;
+
+    template <unsigned long i>
+    using _ulong = _integral_constant<unsigned long, i>;
+
+    template <long long i>
+    using _llong = _integral_constant<long long, i>;
+
+    template <unsigned long long i>
+    using _ullong = _integral_constant<unsigned long long, i>;
+
+    template <detail::std::size_t i>
+    using _size_t = _integral_constant<detail::std::size_t, i>;
+
+#if defined(BOOST_HANA_DOXYGEN_INVOKED) || defined(BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES)
 
     //! @relates IntegralConstant
     template <bool b>
@@ -276,6 +318,8 @@ namespace boost { namespace hana {
     //! @relates IntegralConstant
     template <detail::std::size_t i>
     constexpr auto size_t = integral_constant<detail::std::size_t, i>;
+
+#endif // BOOST_HANA_DOXYGEN_INVOKED || BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
 
     namespace literals {
         //! Creates an `IntegralConstant` from a literal.

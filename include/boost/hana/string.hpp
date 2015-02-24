@@ -14,6 +14,7 @@ Distributed under the Boost Software License, Version 1.0.
 
 #include <boost/hana/bool.hpp>
 #include <boost/hana/comparable.hpp>
+#include <boost/hana/config.hpp>
 #include <boost/hana/core/datatype.hpp>
 #include <boost/hana/core/models.hpp>
 #include <boost/hana/core/operators.hpp>
@@ -52,9 +53,9 @@ namespace boost { namespace hana {
     //////////////////////////////////////////////////////////////////////////
     namespace string_detail {
         template <typename S, detail::std::size_t ...N>
-        constexpr decltype(auto)
+        constexpr _string<S::get()[N]...>
         prepare_impl(S, detail::std::index_sequence<N...>)
-        { return string<S::get()[N]...>; }
+        { return {}; }
 
         template <typename S>
         constexpr decltype(auto) prepare(S s) {
@@ -75,10 +76,12 @@ namespace boost { namespace hana {
     //////////////////////////////////////////////////////////////////////////
     // Operators
     //////////////////////////////////////////////////////////////////////////
-    template <>
-    struct operators::of<String>
-        : operators::of<Comparable, Orderable, Iterable>
-    { };
+    namespace operators {
+        template <>
+        struct of<String>
+            : operators::of<Comparable, Orderable, Iterable>
+        { };
+    }
 
     //////////////////////////////////////////////////////////////////////////
     // Comparable
@@ -86,12 +89,12 @@ namespace boost { namespace hana {
     template <>
     struct equal_impl<String, String> {
         template <typename S>
-        static constexpr auto apply(S const&, S const&)
-        { return true_; }
+        static constexpr _bool<true> apply(S const&, S const&)
+        { return {}; }
 
         template <typename S1, typename S2>
-        static constexpr auto apply(S1 const&, S2 const&)
-        { return false_; }
+        static constexpr _bool<false> apply(S1 const&, S2 const&)
+        { return {}; }
     };
 
     //////////////////////////////////////////////////////////////////////////
@@ -99,6 +102,7 @@ namespace boost { namespace hana {
     //////////////////////////////////////////////////////////////////////////
     template <>
     struct less_impl<String, String> {
+#ifdef BOOST_HANA_CONFIG_HAS_GENERALIZED_CONSTEXPR
         static constexpr bool less_helper(char const* s1, char const* s2) {
             while (*s1 != '\0' && *s2 != '\0' && *s1 == *s2)
                 ++s1, ++s2;
@@ -106,13 +110,21 @@ namespace boost { namespace hana {
             return (*s1 == '\0' && *s2 != '\0') || // s1 is shorter than s2
                    (*s1 != '\0' && *s2 != '\0' && *s1 < *s2); // s1[0] < s2[0]
         }
+#else
+        static constexpr bool less_helper(char const* s1, char const* s2) {
+            return *s1 != '\0' && *s2 != '\0' && *s1 == *s2
+                    ? less_helper(++s1, ++s2)
+                    : (*s1 == '\0' && *s2 != '\0') || // s1 is shorter than s2
+                      (*s1 != '\0' && *s2 != '\0' && *s1 < *s2); // s1[0] < s2[0]
+        }
+#endif
 
         template <char ...s1, char ...s2>
         static constexpr auto
         apply(_string<s1...> const&, _string<s2...> const&) {
             constexpr char const c_str1[] = {s1..., '\0'};
             constexpr char const c_str2[] = {s2..., '\0'};
-            return bool_<less_helper(c_str1, c_str2)>;
+            return _bool<less_helper(c_str1, c_str2)>{};
         }
     };
 
@@ -123,14 +135,14 @@ namespace boost { namespace hana {
     struct unpack_impl<String> {
         template <char ...s, typename F>
         static constexpr decltype(auto) apply(_string<s...> const&, F&& f)
-        { return detail::std::forward<F>(f)(char_<s>...); }
+        { return detail::std::forward<F>(f)(_char<s>{}...); }
     };
 
     template <>
     struct length_impl<String> {
         template <char ...s>
-        static constexpr auto apply(_string<s...> const&)
-        { return size_t<sizeof...(s)>; }
+        static constexpr _size_t<sizeof...(s)> apply(_string<s...> const&)
+        { return {}; }
     };
 
     //////////////////////////////////////////////////////////////////////////
@@ -139,22 +151,22 @@ namespace boost { namespace hana {
     template <>
     struct head_impl<String> {
         template <char x, char ...xs>
-        static constexpr auto apply(_string<x, xs...> const&)
-        { return char_<x>; }
+        static constexpr _char<x> apply(_string<x, xs...> const&)
+        { return {}; }
     };
 
     template <>
     struct tail_impl<String> {
         template <char x, char ...xs>
-        static constexpr auto apply(_string<x, xs...> const&)
-        { return string<xs...>; }
+        static constexpr _string<xs...> apply(_string<x, xs...> const&)
+        { return {}; }
     };
 
     template <>
     struct is_empty_impl<String> {
         template <char ...s>
-        static constexpr auto apply(_string<s...> const&)
-        { return bool_<sizeof...(s) == 0>; }
+        static constexpr _bool<sizeof...(s) == 0> apply(_string<s...> const&)
+        { return {}; }
     };
 
     template <>
@@ -163,7 +175,7 @@ namespace boost { namespace hana {
         static constexpr auto apply(I index, _string<s...> const&) {
             constexpr char characters[] = {s...};
             constexpr auto i = hana::value(index);
-            return char_<characters[i]>;
+            return _char<characters[i]>{};
         }
     };
 
@@ -177,27 +189,32 @@ namespace boost { namespace hana {
 
     template <>
     struct elem_impl<String> {
+#ifdef BOOST_HANA_CONFIG_HAS_GENERALIZED_CONSTEXPR
         static constexpr bool str_elem(char const* s, char c) {
             while (*s != '\0')
                 if (*s++ == c)
                     return true;
             return false;
         }
+#else
+        static constexpr bool str_elem(char const* s, char c) {
+            return *s != '\0' && (*s == c || str_elem(++s, c));
+        }
+#endif
 
         template <char ...s, typename Char>
-        static constexpr auto
-        helper(_string<s...>, Char c, detail::std::true_type) {
+        static constexpr auto elem_helper(_string<s...>, Char c, _bool<true>) {
             constexpr char c_str[] = {s..., '\0'};
-            return bool_<str_elem(c_str, hana::value(c))>;
+            return _bool<str_elem(c_str, hana::value(c))>{};
         }
 
         template <typename S, typename Char>
-        static constexpr auto helper(S, Char, detail::std::false_type)
-        { return false_; }
+        static constexpr auto elem_helper(S, Char, _bool<false>)
+        { return _bool<false>{}; }
 
         template <typename S, typename Char>
-        static constexpr decltype(auto) apply(S s, Char c) {
-            return helper(s, c, detail::std::integral_constant<bool,
+        static constexpr auto apply(S s, Char c) {
+            return elem_helper(s, c, _bool<
                 models<Constant(typename datatype<Char>::type)>{}
             >{});
         }

@@ -12,6 +12,7 @@ Distributed under the Boost Software License, Version 1.0.
 
 #include <boost/hana/fwd/foldable.hpp>
 
+#include <boost/hana/config.hpp>
 #include <boost/hana/core/default.hpp>
 #include <boost/hana/core/models.hpp>
 #include <boost/hana/core/when.hpp>
@@ -197,11 +198,13 @@ namespace boost { namespace hana {
                 f(detail::std::forward<X>(x));
                 return 0;
             }
+#ifndef BOOST_HANA_CONFIG_CONSTEXPR_MEMBER_FUNCTION_IS_CONST
             template <typename X>
             constexpr int operator()(int ignore, X&& x) & {
                 f(detail::std::forward<X>(x));
                 return 0;
             }
+#endif
             template <typename X>
             constexpr int operator()(int ignore, X&& x) && {
                 detail::std::move(f)(detail::std::forward<X>(x));
@@ -246,8 +249,8 @@ namespace boost { namespace hana {
     namespace foldable_detail {
         struct argn {
             template <typename ...Xs>
-            constexpr auto operator()(Xs const& ...) const
-            { return size_t<sizeof...(Xs)>; }
+            constexpr _size_t<sizeof...(Xs)> operator()(Xs const& ...) const
+            { return {}; }
         };
 
         struct inc {
@@ -267,7 +270,8 @@ namespace boost { namespace hana {
         struct length_helper<T, true> {
             template <typename Xs>
             static constexpr decltype(auto) apply(Xs&& xs) {
-                return hana::foldl(detail::std::forward<Xs>(xs), size_t<0>, inc{});
+                return hana::foldl(detail::std::forward<Xs>(xs),
+                                                        _size_t<0>{}, inc{});
             }
         };
     }
@@ -292,6 +296,7 @@ namespace boost { namespace hana {
                     detail::std::forward<Y>(y)
                 );
             }
+#ifndef BOOST_HANA_CONFIG_CONSTEXPR_MEMBER_FUNCTION_IS_CONST
             template <typename X, typename Y>
             constexpr decltype(auto) operator()(X&& x, Y&& y) & {
                 decltype(auto) r = pred(x, y);
@@ -300,6 +305,7 @@ namespace boost { namespace hana {
                     detail::std::forward<Y>(y)
                 );
             }
+#endif
             template <typename X, typename Y>
             constexpr decltype(auto) operator()(X&& x, Y&& y) && {
                 decltype(auto) r = detail::std::move(pred)(x, y);
@@ -354,6 +360,7 @@ namespace boost { namespace hana {
                     detail::std::forward<X>(x)
                 );
             }
+#ifndef BOOST_HANA_CONFIG_CONSTEXPR_MEMBER_FUNCTION_IS_CONST
             template <typename X, typename Y>
             constexpr decltype(auto) operator()(X&& x, Y&& y) & {
                 decltype(auto) r = pred(x, y);
@@ -362,6 +369,7 @@ namespace boost { namespace hana {
                     detail::std::forward<X>(x)
                 );
             }
+#endif
             template <typename X, typename Y>
             constexpr decltype(auto) operator()(X&& x, Y&& y) && {
                 decltype(auto) r = detail::std::move(pred)(x, y);
@@ -445,6 +453,7 @@ namespace boost { namespace hana {
                     counter
                 );
             }
+#ifndef BOOST_HANA_CONFIG_CONSTEXPR_MEMBER_FUNCTION_IS_CONST
             template <typename Counter, typename X>
             constexpr decltype(auto) operator()(Counter&& counter, X&& x) & {
                 return hana::if_(pred(detail::std::forward<X>(x)),
@@ -452,6 +461,7 @@ namespace boost { namespace hana {
                     counter
                 );
             }
+#endif
             template <typename Counter, typename X>
             constexpr decltype(auto) operator()(Counter&& counter, X&& x) && {
                 return hana::if_(detail::std::move(pred)(detail::std::forward<X>(x)),
@@ -469,7 +479,7 @@ namespace boost { namespace hana {
     struct count_impl<T, when<condition>> : default_ {
         template <typename Xs, typename Pred>
         static constexpr decltype(auto) apply(Xs&& xs, Pred&& pred) {
-            return hana::foldl(detail::std::forward<Xs>(xs), size_t<0>,
+            return hana::foldl(detail::std::forward<Xs>(xs), _size_t<0>{},
                 detail::create<foldable_detail::countpred>{}(
                     detail::std::forward<Pred>(pred)
                 )

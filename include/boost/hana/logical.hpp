@@ -35,10 +35,12 @@ namespace boost { namespace hana {
     //////////////////////////////////////////////////////////////////////////
     // Operators
     //////////////////////////////////////////////////////////////////////////
-    template <>
-    struct operators::of<Logical>
-        : decltype(and_), decltype(or_), decltype(not_)
-    { };
+    namespace operators {
+        template <>
+        struct of<Logical>
+            : decltype(and_), decltype(or_), decltype(not_)
+        { };
+    }
 
     namespace operators {
         template <typename X, typename Y, typename = typename detail::std::enable_if<

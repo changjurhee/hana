@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_APPLICATIVE_HPP
 #define BOOST_HANA_FWD_APPLICATIVE_HPP
 
+#include <boost/hana/config.hpp>
 #include <boost/hana/detail/std/forward.hpp>
 
 
@@ -213,8 +214,15 @@ namespace boost { namespace hana {
         }
     };
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <typename A>
     constexpr _lift<A> lift{};
+#else
+    template <typename A, typename X>
+    constexpr decltype(auto) lift(X&& x) {
+        return _lift<A>{}(detail::std::forward<X>(x));
+    }
+#endif
 #endif
 }} // end namespace boost::hana
 

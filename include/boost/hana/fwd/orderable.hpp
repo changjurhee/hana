@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_ORDERABLE_HPP
 #define BOOST_HANA_FWD_ORDERABLE_HPP
 
+#include <boost/hana/config.hpp>
 #include <boost/hana/core/datatype.hpp>
 #include <boost/hana/core/operators.hpp>
 #include <boost/hana/detail/create.hpp>
@@ -518,11 +519,13 @@ namespace boost { namespace hana {
     constexpr detail::create<_ordering> ordering{};
 #endif
 
-    template <>
-    struct operators::of<Orderable>
-        : decltype(less), decltype(less_equal),
-          decltype(greater), decltype(greater_equal)
-    { };
+    namespace operators {
+        template <>
+        struct of<Orderable>
+            : decltype(less), decltype(less_equal),
+              decltype(greater), decltype(greater_equal)
+        { };
+    }
 }} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_ORDERABLE_HPP

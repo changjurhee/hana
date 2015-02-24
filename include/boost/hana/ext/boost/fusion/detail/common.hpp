@@ -47,7 +47,7 @@ namespace boost { namespace hana {
             using Empty = decltype(
                 ::boost::fusion::empty(detail::std::forward<Xs>(xs))
             );
-            return bool_<Empty::value>;
+            return _bool<Empty::value>{};
         }
     };
 

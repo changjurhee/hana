@@ -204,12 +204,12 @@ namespace boost { namespace hana {
         template <typename Xs, typename Pred>
         static constexpr auto
         any_helper(detail::std::true_type, Xs&& xs, Pred&&)
-        { return true_; }
+        { return _true{}; }
 
         template <typename Xs, typename Pred>
         static constexpr auto
         any_helper(detail::std::false_type, Xs&&, Pred&&)
-        { return false_; }
+        { return _false{}; }
 
         template <typename Xs, typename Pred>
         static constexpr decltype(auto) apply(Xs&& xs, Pred&& pred) {

@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_DETAIL_REVERSE_PARTIAL_HPP
 #define BOOST_HANA_DETAIL_REVERSE_PARTIAL_HPP
 
+#include <boost/hana/config.hpp>
 #include <boost/hana/detail/closure.hpp>
 #include <boost/hana/detail/create.hpp>
 #include <boost/hana/detail/std/forward.hpp>
@@ -45,10 +46,12 @@ namespace boost { namespace hana { namespace detail {
             return f(detail::std::forward<Y>(y)..., static_cast<X const&>(x).get...);
         }
 
+#ifndef BOOST_HANA_CONFIG_CONSTEXPR_MEMBER_FUNCTION_IS_CONST
         template <typename ...Y>
         constexpr decltype(auto) operator()(Y&& ...y) & {
             return f(detail::std::forward<Y>(y)..., static_cast<X&>(x).get...);
         }
+#endif
 
         template <typename ...Y>
         constexpr decltype(auto) operator()(Y&& ...y) && {

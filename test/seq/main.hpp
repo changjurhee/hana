@@ -41,10 +41,12 @@ namespace boost { namespace hana {
         );
     }
 
-    template <>
-    struct operators::of<test::Seq>
-        : operators::of<Iterable>
-    { };
+    namespace operators {
+        template <>
+        struct of<test::Seq>
+            : operators::of<Iterable>
+        { };
+    }
 }}
 
 

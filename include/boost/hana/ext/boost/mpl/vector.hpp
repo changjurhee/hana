@@ -109,7 +109,7 @@ namespace boost { namespace hana {
     struct head_impl<ext::boost::mpl::Vector> {
         template <typename xs>
         static constexpr auto apply(xs)
-        { return type<typename ::boost::mpl::front<xs>::type>; }
+        { return make_type<typename ::boost::mpl::front<xs>::type>(); }
     };
 
     template <>

@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_DETAIL_GENERATE_INTEGER_SEQUENCE_HPP
 #define BOOST_HANA_DETAIL_GENERATE_INTEGER_SEQUENCE_HPP
 
+#include <boost/hana/config.hpp>
 #include <boost/hana/detail/std/integer_sequence.hpp>
 #include <boost/hana/detail/std/size_t.hpp>
 #include <boost/hana/functional/id.hpp>
@@ -18,14 +19,21 @@ Distributed under the Boost Software License, Version 1.0.
 namespace boost { namespace hana { namespace detail {
     template <typename T, detail::std::size_t Size>
     struct array {
-        constexpr T& operator[](detail::std::size_t n) { return elems_[n]; }
-        constexpr T const& operator[](detail::std::size_t n) const { return elems_[n]; }
+#ifndef BOOST_HANA_CONFIG_CONSTEXPR_MEMBER_FUNCTION_IS_CONST
+        constexpr T& operator[](detail::std::size_t n)
+        { return elems_[n]; }
+#endif
+        constexpr T const& operator[](detail::std::size_t n) const
+        { return elems_[n]; }
+
         constexpr detail::std::size_t size() const noexcept { return Size; }
         T elems_[Size > 0 ? Size : 1];
 
+#ifndef BOOST_HANA_CONFIG_CONSTEXPR_MEMBER_FUNCTION_IS_CONST
         constexpr T* begin() noexcept             { return elems_; }
-        constexpr T const* begin() const noexcept { return elems_; }
         constexpr T* end() noexcept               { return elems_ + Size; }
+#endif
+        constexpr T const* begin() const noexcept { return elems_; }
         constexpr T const* end() const noexcept   { return elems_ + Size; }
     };
 

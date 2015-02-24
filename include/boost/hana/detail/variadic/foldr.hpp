@@ -22,7 +22,7 @@ namespace boost { namespace hana { namespace detail { namespace variadic {
     constexpr decltype(auto) foldr_impl(F&& f, S&& s, ...) {
         return foldr1(
             detail::std::forward<F>(f),
-            type<Xs>...,
+            make_type<Xs>()...,
             detail::std::forward<S>(s)
         );
     }

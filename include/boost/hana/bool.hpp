@@ -50,7 +50,7 @@ namespace boost { namespace hana {
 
             template <typename F>
             static constexpr void with_index(F&& f)
-            { (void)swallow{T{}, ((void)f(integral_constant<T, i>), i)...}; }
+            { (void)swallow{T{}, ((void)f(_integral_constant<T, i>{}), i)...}; }
 
             template <typename F>
             static constexpr void without_index(F&& f)
@@ -85,14 +85,16 @@ namespace boost { namespace hana {
     //////////////////////////////////////////////////////////////////////////
     // Operators (most of them are provided by the concepts)
     //////////////////////////////////////////////////////////////////////////
-    template <typename T>
-    struct operators::of<IntegralConstant<T>>
-        : operators::of<
-              Comparable, Orderable
-            , Logical
-            , Monoid, Group, Ring, IntegralDomain
-        >
-    { };
+    namespace operators {
+        template <typename T>
+        struct of<IntegralConstant<T>>
+            : operators::of<
+                  Comparable, Orderable
+                , Logical
+                , Monoid, Group, Ring, IntegralDomain
+            >
+        { };
+    }
 
 #define BOOST_HANA_INTEGRAL_CONSTANT_BINARY_OP(op)                          \
     template <typename U, U u, typename V, V v>                             \
@@ -144,7 +146,7 @@ namespace boost { namespace hana {
     namespace literals {
         template <char ...c>
         constexpr auto operator"" _c()
-        { return llong<ic_detail::parse<sizeof...(c)>({c...})>; }
+        { return _llong<ic_detail::parse<sizeof...(c)>({c...})>{}; }
     }
 
     //////////////////////////////////////////////////////////////////////////
@@ -171,7 +173,7 @@ namespace boost { namespace hana {
         template <typename X>
         static constexpr auto apply(X x) {
             constexpr auto v = hana::value(x);
-            return integral_constant<T, static_cast<T>(v)>;
+            return _integral_constant<T, static_cast<T>(v)>{};
         }
     };
 }} // end namespace boost::hana

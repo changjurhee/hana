@@ -35,10 +35,12 @@ namespace boost { namespace hana {
     //////////////////////////////////////////////////////////////////////////
     // Operators
     //////////////////////////////////////////////////////////////////////////
-    template <>
-    struct operators::of<Type>
-        : operators::of<Comparable>
-    { };
+    namespace operators {
+        template <>
+        struct of<Type>
+            : operators::of<Comparable>
+        { };
+    }
 
     //////////////////////////////////////////////////////////////////////////
     // Comparable
@@ -46,18 +48,18 @@ namespace boost { namespace hana {
     template <>
     struct equal_impl<Type, Type> {
         template <typename T, typename U>
-        static constexpr auto apply(T, U)
-        { return false_; }
+        static constexpr _bool<false> apply(T, U)
+        { return {}; }
 
         template <typename T>
-        static constexpr auto apply(T, T)
-        { return true_; }
+        static constexpr _bool<true> apply(T, T)
+        { return {}; }
     };
 
     //! @cond
     template <typename T>
     constexpr auto _sizeof::operator()(T) const
-    { return size_t<sizeof(typename T::type)>; }
+    { return _size_t<sizeof(typename T::type)>{}; }
     //! @endcond
 }} // end namespace boost::hana
 

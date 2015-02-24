@@ -14,6 +14,7 @@ Distributed under the Boost Software License, Version 1.0.
 
 #include <boost/hana/bool.hpp>
 #include <boost/hana/comparable.hpp>
+#include <boost/hana/config.hpp>
 #include <boost/hana/core/datatype.hpp>
 #include <boost/hana/core/default.hpp>
 #include <boost/hana/core/models.hpp>
@@ -48,6 +49,7 @@ namespace boost { namespace hana {
                 );
             }
 
+#ifndef BOOST_HANA_CONFIG_CONSTEXPR_MEMBER_FUNCTION_IS_CONST
             template <typename I>
             constexpr decltype(auto) operator[](I&& i) & {
                 return hana::at(
@@ -55,6 +57,7 @@ namespace boost { namespace hana {
                     static_cast<Derived&>(*this)
                 );
             }
+#endif
 
             template <typename I>
             constexpr decltype(auto) operator[](I&& i) && {
@@ -136,7 +139,7 @@ namespace boost { namespace hana {
     struct _at_c {
         template <typename Xs>
         constexpr decltype(auto) operator()(Xs&& xs) const
-        { return hana::at(size_t<n>, detail::std::forward<Xs>(xs)); }
+        { return hana::at(_size_t<n>{}, detail::std::forward<Xs>(xs)); }
     };
 
     //////////////////////////////////////////////////////////////////////////
@@ -182,7 +185,7 @@ namespace boost { namespace hana {
     struct _drop_c {
         template <typename Xs>
         constexpr decltype(auto) operator()(Xs&& xs) const
-        { return hana::drop(size_t<n>, detail::std::forward<Xs>(xs)); }
+        { return hana::drop(_size_t<n>{}, detail::std::forward<Xs>(xs)); }
     };
 
     //////////////////////////////////////////////////////////////////////////
@@ -325,10 +328,10 @@ namespace boost { namespace hana {
         template <typename Xs, typename Pred>
         static constexpr auto apply(Xs xs, Pred pred) {
             return hana::eval_if(hana::is_empty(xs),
-                hana::always(false_),
+                hana::always(_bool<false>{}),
                 [=](auto _) {
                     return hana::eval_if(pred(_(head)(xs)),
-                        hana::always(true_),
+                        hana::always(_bool<true>{}),
                         [=](auto _) { return apply(_(tail)(xs), pred); }
                     );
                 }

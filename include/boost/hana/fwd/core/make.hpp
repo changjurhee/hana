@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_CORE_MAKE_HPP
 #define BOOST_HANA_FWD_CORE_MAKE_HPP
 
+#include <boost/hana/config.hpp>
 #include <boost/hana/detail/std/forward.hpp>
 
 
@@ -63,8 +64,15 @@ namespace boost { namespace hana {
         }
     };
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <typename Datatype>
     constexpr _make<Datatype> make{};
+#else
+    template <typename Datatype, typename ...X>
+    constexpr decltype(auto) make(X&& ...x) {
+        return _make<Datatype>{}(detail::std::forward<X>(x)...);
+    }
+#endif
 #endif
 }} // end namespace boost::hana
 

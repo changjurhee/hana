@@ -10,6 +10,10 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_CONFIG_HPP
 #define BOOST_HANA_CONFIG_HPP
 
+//////////////////////////////////////////////////////////////////////////////
+// Compiler-independent options
+//////////////////////////////////////////////////////////////////////////////
+
 #if defined(BOOST_HANA_DOXYGEN_INVOKED) || \
     (defined(NDEBUG) && !defined(BOOST_HANA_CONFIG_DISABLE_PRECONDITIONS))
     //! @ingroup group-config
@@ -52,17 +56,77 @@ Distributed under the Boost Software License, Version 1.0.
 #   define BOOST_HANA_CONFIG_DISABLE_ASSERTIONS
 #endif
 
-#if defined(BOOST_HANA_DOXYGEN_INVOKED) || 0 // currently always disabled
+
+//////////////////////////////////////////////////////////////////////////////
+// Compiler-dependent options
+//////////////////////////////////////////////////////////////////////////////
+
+#if defined(BOOST_HANA_DOXYGEN_INVOKED)
+
     //! @ingroup group-config
     //! Enables some optimizations based on C++1z fold-expressions.
 #   define BOOST_HANA_CONFIG_HAS_CXX1Z_FOLD_EXPRESSIONS
-#endif
 
-#if defined(BOOST_HANA_DOXYGEN_INVOKED) || 0 // currently always disabled
     //! @ingroup group-config
     //! Enables some constructs requiring `constexpr` lambdas, which are not
     //! in the language (yet).
 #   define BOOST_HANA_CONFIG_HAS_CONSTEXPR_LAMBDA
+
+    //! @ingroup group-config
+    //! Whether C++14 variable templates are supported by the compiler.
+    //!
+    //! This essentially affects some tag-dispatched methods which are
+    //! regular functions instead of function objects when variable templates
+    //! are not supported.
+#   define BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
+
+    //! @ingroup group-config
+    //! Whether C++14 relaxed constexpr functions are supported by the
+    //! compiler.
+    //!
+    //! This essentially affects the implementation of some constexpr
+    //! functions, which will use recursion instead of iteration if
+    //! relaxed constexpr is not supported. Recursion tends to be
+    //! slower at compile-time than iteration and it is also limited
+    //! to the recursive `constexpr` depth of the compiler.
+#   define BOOST_HANA_CONFIG_HAS_RELAXED_CONSTEXPR
+
+    //! @ingroup group-config
+    //! Whether non-static constexpr member functions are automatically marked
+    //! as `const`.
+    //!
+    //! In C++11, a non-static constexpr member function is automatically
+    //! marked as `const`. In C++14, this is not the case. This macro
+    //! essentially influences which overloads are provided for non-static
+    //! constexpr member functions. In particular, when such a function is
+    //! automatically marked as `const`, we can't provide both overloads:
+    //! @code
+    //!     constexpr ... member_function(...) const&
+    //!     constexpr ... member_function(...) &
+    //! @endcode
+    //! since they are actually the same.
+#   define BOOST_HANA_CONFIG_CONSTEXPR_MEMBER_FUNCTION_IS_CONST
+
+
+#elif defined(__clang__)
+
+#   if __has_feature(cxx_variable_templates) || __has_extension(cxx_variable_templates)
+#       define BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
+#   endif
+
+#   if __has_feature(cxx_relaxed_constexpr) || __has_extension(cxx_relaxed_constexpr)
+#       define BOOST_HANA_CONFIG_HAS_RELAXED_CONSTEXPR
+#   endif
+
+
+#elif defined(__GNUC__)
+
+#   define BOOST_HANA_CONFIG_CONSTEXPR_MEMBER_FUNCTION_IS_CONST
+
+
+#else
+
+#   warning "Your compiler is not officially supportd by Hana or it was not detected properly. Good luck."
 
 #endif
 

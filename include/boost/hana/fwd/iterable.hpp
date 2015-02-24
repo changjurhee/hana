@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_ITERABLE_HPP
 #define BOOST_HANA_FWD_ITERABLE_HPP
 
+#include <boost/hana/config.hpp>
 #include <boost/hana/core/datatype.hpp>
 #include <boost/hana/detail/std/forward.hpp>
 #include <boost/hana/detail/std/size_t.hpp>
@@ -311,8 +312,10 @@ namespace boost { namespace hana {
     template <detail::std::size_t n>
     struct _at_c;
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <detail::std::size_t n>
     constexpr _at_c<n> at_c{};
+#endif
 #endif
 
     //! Returns the last element of a non-empty and finite iterable.
@@ -416,8 +419,10 @@ namespace boost { namespace hana {
     template <detail::std::size_t n>
     struct _drop_c;
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <detail::std::size_t n>
     constexpr _drop_c<n> drop_c{};
+#endif
 #endif
 
     //! Drop elements from an iterable up to, but excluding, the first

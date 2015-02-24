@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_TYPE_HPP
 #define BOOST_HANA_FWD_TYPE_HPP
 
+#include <boost/hana/config.hpp>
 #include <boost/hana/core/operators.hpp>
 
 
@@ -194,7 +195,12 @@ namespace boost { namespace hana {
     };
 
     template <typename T>
+    constexpr typename _type<T>::_ make_type() { return {}; }
+
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
+    template <typename T>
     constexpr typename _type<T>::_ type{};
+#endif
 #endif
 
     //! Returns the type of an object as a `Type`.
@@ -210,7 +216,7 @@ namespace boost { namespace hana {
     struct _decltype {
         template <typename T>
         constexpr auto operator()(T) const
-        { return type<T>; }
+        { return make_type<T>(); }
     };
 
     constexpr _decltype decltype_{};
@@ -285,11 +291,13 @@ namespace boost { namespace hana {
 
         template <typename ...xs>
         constexpr auto operator()(xs...) const
-        { return type<f<typename xs::type...>>; }
+        { return make_type<f<typename xs::type...>>(); }
     };
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <template <typename ...> class f>
     constexpr _template<f> template_{};
+#endif
 #endif
 
     //! Lift a MPL-style metafunction to a function on `Type`s.
@@ -320,11 +328,13 @@ namespace boost { namespace hana {
 
         template <typename ...xs>
         constexpr auto operator()(xs...) const
-        { return type<typename f<typename xs::type...>::type>; }
+        { return make_type<typename f<typename xs::type...>::type>(); }
     };
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <template <typename ...> class f>
     constexpr _metafunction<f> metafunction{};
+#endif
 #endif
 
     //! Lift a MPL-style metafunction class to a function on `Type`s.
@@ -354,14 +364,16 @@ namespace boost { namespace hana {
 
         template <typename ...xs>
         constexpr auto operator()(xs...) const {
-            return type<
+            return make_type<
                 typename f::template apply<typename xs::type...>::type
-            >;
+            >();
         }
     };
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <typename f>
     constexpr _metafunction_class<f> metafunction_class{};
+#endif
 #endif
 
     //! Lift a MPL-style metafunction to a function taking `Type`s and
@@ -412,8 +424,10 @@ namespace boost { namespace hana {
         { return f<typename xs::type...>{}; }
     };
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <template <typename ...> class f>
     constexpr _trait<f> trait{};
+#endif
 #endif
 
     //! Equivalent to `compose(trait<f>, decltype_)`; provided for convenience.
@@ -439,8 +453,10 @@ namespace boost { namespace hana {
         { return f<xs...>{}; }
     };
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <template <typename ...> class f>
     constexpr _trait_<f> trait_{};
+#endif
 #endif
 }} // end namespace boost::hana
 

@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FUNCTIONAL_CURRY_HPP
 #define BOOST_HANA_FUNCTIONAL_CURRY_HPP
 
+#include <boost/hana/config.hpp>
 #include <boost/hana/detail/std/decay.hpp>
 #include <boost/hana/detail/std/forward.hpp>
 #include <boost/hana/detail/std/move.hpp>
@@ -109,15 +110,22 @@ namespace boost { namespace hana {
         operator()(F&& f) const { return {detail::std::forward<F>(f)}; }
     };
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <detail::std::size_t n>
     constexpr _make_curry<n> curry{};
+#else
+    template <detail::std::size_t n, typename F>
+    constexpr decltype(auto) curry(F&& f) {
+        return _make_curry<n>{}(detail::std::forward<F>(f));
+    }
+#endif
 
     namespace curry_detail {
         template <detail::std::size_t n>
-        constexpr auto curry_or_call = curry<n>;
+        struct curry_or_call : _make_curry<n> { };
 
         template <>
-        constexpr auto curry_or_call<0> = apply;
+        struct curry_or_call<0> : decltype(apply) { };
     }
 
     template <detail::std::size_t n, typename F>
@@ -128,26 +136,31 @@ namespace boost { namespace hana {
         constexpr decltype(auto) operator()(X&& ...x) const& {
             static_assert(sizeof...(x) <= n,
             "too many arguments provided to boost::hana::curry");
-            return curry_detail::curry_or_call<n - sizeof...(x)>(
-                partial(f, detail::std::forward<X>(x)...)
+
+            return curry_detail::curry_or_call<n - sizeof...(x)>{}(
+                hana::partial(f, detail::std::forward<X>(x)...)
             );
         }
 
+#ifndef BOOST_HANA_CONFIG_CONSTEXPR_MEMBER_FUNCTION_IS_CONST
         template <typename ...X>
         constexpr decltype(auto) operator()(X&& ...x) & {
             static_assert(sizeof...(x) <= n,
             "too many arguments provided to boost::hana::curry");
-            return curry_detail::curry_or_call<n - sizeof...(x)>(
-                partial(f, detail::std::forward<X>(x)...)
+
+            return curry_detail::curry_or_call<n - sizeof...(x)>{}(
+                hana::partial(f, detail::std::forward<X>(x)...)
             );
         }
+#endif
 
         template <typename ...X>
         constexpr decltype(auto) operator()(X&& ...x) && {
             static_assert(sizeof...(x) <= n,
             "too many arguments provided to boost::hana::curry");
-            return curry_detail::curry_or_call<n - sizeof...(x)>(
-                partial(detail::std::move(f), detail::std::forward<X>(x)...)
+
+            return curry_detail::curry_or_call<n - sizeof...(x)>{}(
+                hana::partial(detail::std::move(f), detail::std::forward<X>(x)...)
             );
         }
     };
@@ -159,8 +172,10 @@ namespace boost { namespace hana {
         constexpr decltype(auto) operator()() const&
         { return f(); }
 
+#ifndef BOOST_HANA_CONFIG_CONSTEXPR_MEMBER_FUNCTION_IS_CONST
         constexpr decltype(auto) operator()() &
         { return f(); }
+#endif
 
         constexpr decltype(auto) operator()() &&
         { return detail::std::move(f)(); }

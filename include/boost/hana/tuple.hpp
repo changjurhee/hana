@@ -71,17 +71,19 @@ namespace boost { namespace hana {
 
     template <typename ...T>
     struct _tuple_t<T...>::_
-        : _tuple_t<T...>, _tuple<decltype(type<T>)...>
+        : _tuple_t<T...>, _tuple<decltype(make_type<T>())...>
     {
         constexpr _()
-            : _tuple<decltype(type<T>)...>{type<T>...}
+            : _tuple<decltype(make_type<T>())...>{make_type<T>()...}
         { }
     };
 
-    template <>
-    struct operators::of<Tuple>
-        : operators::of<Comparable, Orderable, Monad, Iterable>
-    { };
+    namespace operators {
+        template <>
+        struct of<Tuple>
+            : operators::of<Comparable, Orderable, Monad, Iterable>
+        { };
+    }
 
     //////////////////////////////////////////////////////////////////////////
     // make
@@ -145,12 +147,12 @@ namespace boost { namespace hana {
 
         // tuple_t optimizations
         template <typename ...T>
-        static constexpr auto apply(_tuple_t<T...>, _tuple_t<T...>)
-        { return true_; }
+        static constexpr _bool<true> apply(_tuple_t<T...>, _tuple_t<T...>)
+        { return {}; }
 
         template <typename ...T, typename ...U>
-        static constexpr auto apply(_tuple_t<T...>, _tuple_t<U...>)
-        { return false_; }
+        static constexpr _bool<false> apply(_tuple_t<T...>, _tuple_t<U...>)
+        { return {}; }
 
 
         // tuple_c optimizations
@@ -158,13 +160,13 @@ namespace boost { namespace hana {
             detail::std::enable_if_t<sizeof...(v) == sizeof...(u)>>
         static constexpr auto apply(_tuple_c<V, v...>, _tuple_c<U, u...>) {
             constexpr bool comparisons[] = {true, (v == u)...};
-            return bool_<hana::all_of(comparisons)>;
+            return _bool<hana::all_of(comparisons)>{};
         }
 
         template <typename V, V ...v, typename U, U ...u, typename =
             detail::std::enable_if_t<sizeof...(v) != sizeof...(u)>>
         static constexpr auto apply(_tuple_c<V, v...>, _tuple_c<U, u...>, ...)
-        { return false_; }
+        { return _bool<false>{}; }
     };
 
     //////////////////////////////////////////////////////////////////////////
@@ -186,14 +188,14 @@ namespace boost { namespace hana {
 
         template <typename ...T, template <typename ...> class F>
         static constexpr auto apply(_tuple_t<T...>, _metafunction<F>)
-        { return type<typename F<T...>::type>; }
+        { return make_type<typename F<T...>::type>(); }
     };
 
     template <>
     struct length_impl<Tuple> {
         template <typename Xs>
-        static constexpr auto apply(Xs const&)
-        { return size_t<Xs::size>; }
+        static constexpr _size_t<Xs::size> apply(Xs const&)
+        { return {}; }
     };
 
     //////////////////////////////////////////////////////////////////////////
@@ -231,15 +233,15 @@ namespace boost { namespace hana {
     template <>
     struct is_empty_impl<Tuple> {
         template <typename Xs>
-        static constexpr auto apply(Xs const&)
-        { return bool_<Xs::is_empty>; }
+        static constexpr _bool<Xs::is_empty> apply(Xs const&)
+        { return {}; }
     };
 
     template <>
     struct last_impl<Tuple> {
         template <typename Xs>
         static constexpr decltype(auto) apply(Xs&& xs) {
-            constexpr detail::std::size_t size = tuple_detail::size<Xs>{};
+            constexpr detail::std::size_t size = tuple_detail::size<Xs>{}();
             return detail::get<size - 1>(detail::std::forward<Xs>(xs));
         }
     };
@@ -258,7 +260,7 @@ namespace boost { namespace hana {
         template <typename N, typename Xs>
         static constexpr decltype(auto) apply(N n_, Xs&& xs) {
             constexpr Size n = hana::value(n_);
-            constexpr Size size = tuple_detail::size<Xs>{};
+            constexpr Size size = tuple_detail::size<Xs>{}();
             constexpr Size drop_size = n > size ? size : n;
             return drop_helper<drop_size>(detail::std::forward<Xs>(xs),
                 detail::std::make_index_sequence<size - drop_size>{});
@@ -290,7 +292,7 @@ namespace boost { namespace hana {
         template <typename ...T, template <typename ...> class F>
         static constexpr auto
         transform_helper(_tuple_t<T...>, _metafunction<F>, int)
-        { return tuple_t<typename F<T>::type...>; }
+        { return make_tuple_t<typename F<T>::type...>(); }
 
         template <typename Xs, typename F>
         static constexpr auto apply(Xs&& xs, F&& f) {
@@ -308,15 +310,14 @@ namespace boost { namespace hana {
         template <typename X, typename ...Xs, typename V>
         static constexpr _tuple<
             typename detail::std::decay<V>::type,
-            typename detail::std::decay<
-                tuple_detail::expand<!!sizeof(Xs), V>
-            >::type...
+            tuple_detail::expand<!!sizeof(Xs),
+                typename detail::std::decay<V>::type>...
         > apply(detail::closure_impl<X, Xs...> const&, V&& v)
         { return {((void)sizeof(Xs), v)..., detail::std::forward<V>(v)}; }
 
         template <typename ...Xs, typename T>
         static constexpr auto apply(_tuple<Xs...> const&, _type<T> const&)
-        { return tuple_t<tuple_detail::expand<!!sizeof(Xs), T>...>; }
+        { return make_tuple_t<tuple_detail::expand<!!sizeof(Xs), T>...>(); }
     };
 
     //////////////////////////////////////////////////////////////////////////
@@ -429,14 +430,14 @@ namespace boost { namespace hana {
         template <typename X, detail::std::size_t i, detail::std::size_t ...j>
         static constexpr _tuple<
             typename detail::std::decay<X>::type,
-            typename detail::std::decay<tuple_detail::expand<!!j, X>>::type...
+            tuple_detail::expand<!!j, typename detail::std::decay<X>::type>...
         > repeat_helper(X&& x, detail::std::index_sequence<i, j...>)
         { return {((void)j, x)..., detail::std::forward<X>(x)}; }
 
         template <typename T, detail::std::size_t ...i>
         static constexpr auto
         repeat_helper(_type<T>, detail::std::index_sequence<i...>)
-        { return tuple_t<tuple_detail::expand<!!i, T>...>; }
+        { return make_tuple_t<tuple_detail::expand<!!i, T>...>(); }
 
         template <typename N, typename X>
         static constexpr decltype(auto) apply(N n_, X&& x) {
@@ -504,7 +505,7 @@ namespace boost { namespace hana {
 
         template <typename Xs>
         static constexpr decltype(auto) apply(Xs&& xs) {
-            constexpr detail::std::size_t size = tuple_detail::size<Xs>{};
+            constexpr detail::std::size_t size = tuple_detail::size<Xs>{}();
             return init_helper(detail::std::forward<Xs>(xs),
                 detail::std::make_index_sequence<size - 1>{});
         }
@@ -543,7 +544,7 @@ namespace boost { namespace hana {
 
         template <typename Xs, typename Z>
         static constexpr decltype(auto) apply(Xs&& xs, Z&& z) {
-            constexpr detail::std::size_t size = tuple_detail::size<Xs>{};
+            constexpr detail::std::size_t size = tuple_detail::size<Xs>{}();
             constexpr auto new_seq_size = size == 0 ? 0 : (size * 2) - 1;
             return intersperse_helper(detail::std::forward<Xs>(xs),
                           detail::std::forward<Z>(z),
@@ -573,7 +574,7 @@ namespace boost { namespace hana {
         template <typename N, typename Xs>
         static constexpr decltype(auto) apply(N n, Xs&& xs) {
             constexpr Size index = hana::value(n);
-            constexpr Size size = tuple_detail::size<Xs>{};
+            constexpr Size size = tuple_detail::size<Xs>{}();
             return remove_at_helper(detail::std::forward<Xs>(xs),
                           detail::std::make_index_sequence<index>{},
                           detail::std::make_index_sequence<size - index - 1>{});
@@ -640,7 +641,7 @@ namespace boost { namespace hana {
         sort_helper(_tuple_c<T, v...> xs, detail::std::index_sequence<i...>) {
             constexpr array<T, sizeof...(v)> a{{v...}};
             constexpr auto result = insertion_sort(a);
-            return tuple_c<T, result.values[i]...>;
+            return _tuple_c<T, result.values[i]...>{};
         }
 
         template <typename ...T>
@@ -670,7 +671,7 @@ namespace boost { namespace hana {
         template <typename N, typename Xs>
         static constexpr decltype(auto) apply(N n_, Xs&& xs) {
             constexpr detail::std::size_t n = hana::value(n_);
-            constexpr detail::std::size_t size = tuple_detail::size<Xs>{};
+            constexpr detail::std::size_t size = tuple_detail::size<Xs>{}();
             return take_helper(detail::std::forward<Xs>(xs),
                 detail::std::make_index_sequence<(n < size ? n : size)>{});
         }

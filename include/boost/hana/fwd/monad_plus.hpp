@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_MONAD_PLUS_HPP
 #define BOOST_HANA_FWD_MONAD_PLUS_HPP
 
+#include <boost/hana/config.hpp>
 #include <boost/hana/core/datatype.hpp>
 #include <boost/hana/detail/std/forward.hpp>
 #include <boost/hana/detail/std/is_same.hpp>
@@ -158,8 +159,14 @@ namespace boost { namespace hana {
         }
     };
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <typename M>
     constexpr _empty<M> empty{};
+#else
+    template <typename M>
+    constexpr decltype(auto) empty()
+    { return _empty<M>{}(); }
+#endif
 #endif
 
     //! Prepend an element to a monadic structure.
@@ -461,15 +468,21 @@ namespace boost { namespace hana {
     struct _repeat {
         template <typename N, typename X>
         constexpr decltype(auto) operator()(N&& n, X&& x) const {
-            return repeat_impl<M>::apply(
-                detail::std::forward<decltype(n)>(n),
-                detail::std::forward<decltype(x)>(x)
-            );
+            return repeat_impl<M>::apply(detail::std::forward<N>(n),
+                                         detail::std::forward<X>(x));
         }
     };
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <typename M>
     constexpr _repeat<M> repeat{};
+#else
+    template <typename M, typename N, typename X>
+    constexpr decltype(auto) repeat(N&& n, X&& x) {
+        return _repeat<M>{}(detail::std::forward<N>(n),
+                            detail::std::forward<X>(x));
+    }
+#endif
 #endif
 
     //! Inserts a value before each element of a monadic structure.

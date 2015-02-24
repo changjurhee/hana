@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FUNCTIONAL_ON_HPP
 #define BOOST_HANA_FUNCTIONAL_ON_HPP
 
+#include <boost/hana/config.hpp>
 #include <boost/hana/detail/create.hpp>
 #include <boost/hana/detail/std/forward.hpp>
 #include <boost/hana/detail/std/move.hpp>
@@ -66,10 +67,12 @@ namespace boost { namespace hana {
             return f(g(detail::std::forward<X>(x))...);
         }
 
+#ifndef BOOST_HANA_CONFIG_CONSTEXPR_MEMBER_FUNCTION_IS_CONST
         template <typename ...X>
         constexpr decltype(auto) operator()(X&& ...x) & {
             return f(g(detail::std::forward<X>(x))...);
         }
+#endif
 
         template <typename ...X>
         constexpr decltype(auto) operator()(X&& ...x) && {

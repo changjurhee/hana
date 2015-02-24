@@ -24,7 +24,7 @@ namespace boost { namespace hana { namespace detail { namespace variadic {
         return foldl1(
             detail::std::forward<F>(f),
             detail::std::forward<S>(s),
-            type<Xs>...
+            make_type<Xs>()...
         );
     }
 

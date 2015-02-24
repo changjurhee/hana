@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_SEQUENCE_HPP
 #define BOOST_HANA_FWD_SEQUENCE_HPP
 
+#include <boost/hana/config.hpp>
 #include <boost/hana/core/datatype.hpp>
 #include <boost/hana/detail/std/forward.hpp>
 #include <boost/hana/detail/std/size_t.hpp>
@@ -461,8 +462,10 @@ namespace boost { namespace hana {
     template <detail::std::size_t n>
     struct _remove_at_c;
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <detail::std::size_t n>
     constexpr _remove_at_c<n> remove_at_c{};
+#endif
 #endif
 
     //! Reverse a sequence.
@@ -824,8 +827,10 @@ namespace boost { namespace hana {
     template <detail::std::size_t from, detail::std::size_t to>
     struct _slice_c;
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <detail::std::size_t from, detail::std::size_t to>
     constexpr _slice_c<from, to> slice_c{};
+#endif
 #endif
 
     //! Sort a sequence based on the given `predicate`.
@@ -1062,8 +1067,10 @@ namespace boost { namespace hana {
     template <detail::std::size_t n>
     struct _take_c;
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <detail::std::size_t n>
     constexpr _take_c<n> take_c{};
+#endif
 #endif
 
     //! Take elements from a sequence until the `predicate` is satisfied.
@@ -1205,19 +1212,27 @@ namespace boost { namespace hana {
     template <typename S, typename = void>
     struct unfoldl_impl;
 
-    template <typename L>
+    template <typename S>
     struct _unfoldl {
         template <typename F, typename Initial>
         constexpr decltype(auto) operator()(F&& f, Initial&& initial) const {
-            return unfoldl_impl<L>::apply(
-                detail::std::forward<decltype(f)>(f),
-                detail::std::forward<decltype(initial)>(initial)
+            return unfoldl_impl<S>::apply(
+                detail::std::forward<F>(f),
+                detail::std::forward<Initial>(initial)
             );
         }
     };
 
-    template <typename L>
-    constexpr _unfoldl<L> unfoldl{};
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
+    template <typename S>
+    constexpr _unfoldl<S> unfoldl{};
+#else
+    template <typename S, typename F, typename Initial>
+    constexpr decltype(auto) unfoldl(F&& f, Initial&& initial) {
+        return _unfoldl<S>{}(detail::std::forward<F>(f),
+                             detail::std::forward<Initial>(initial));
+    }
+#endif
 #endif
 
     //! Dual to `foldr` for sequences.
@@ -1265,19 +1280,27 @@ namespace boost { namespace hana {
     template <typename S, typename = void>
     struct unfoldr_impl;
 
-    template <typename L>
+    template <typename S>
     struct _unfoldr {
         template <typename F, typename Initial>
         constexpr decltype(auto) operator()(F&& f, Initial&& initial) const {
-            return unfoldr_impl<L>::apply(
-                detail::std::forward<decltype(f)>(f),
-                detail::std::forward<decltype(initial)>(initial)
+            return unfoldr_impl<S>::apply(
+                detail::std::forward<F>(f),
+                detail::std::forward<Initial>(initial)
             );
         }
     };
 
-    template <typename L>
-    constexpr _unfoldr<L> unfoldr{};
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
+    template <typename S>
+    constexpr _unfoldr<S> unfoldr{};
+#else
+    template <typename S, typename F, typename Initial>
+    constexpr decltype(auto) unfoldr(F&& f, Initial&& initial) {
+        return _unfoldr<S>{}(detail::std::forward<F>(f),
+                             detail::std::forward<Initial>(initial));
+    }
+#endif
 #endif
 
     //! Unzip a sequence of sequences.

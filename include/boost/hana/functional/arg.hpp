@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FUNCTIONAL_ARG_HPP
 #define BOOST_HANA_FUNCTIONAL_ARG_HPP
 
+#include <boost/hana/config.hpp>
 #include <boost/hana/detail/std/enable_if.hpp>
 #include <boost/hana/detail/std/forward.hpp>
 #include <boost/hana/detail/std/size_t.hpp>
@@ -138,8 +139,15 @@ namespace boost { namespace hana {
         { return _arg<n - 25>{}(detail::std::forward<Xn>(xn)...); }
     };
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <detail::std::size_t n>
     constexpr _arg<n> arg{};
+#else
+    template <detail::std::size_t n, typename ...X>
+    constexpr decltype(auto) arg(X&& ...x) {
+        return _arg<n>{}(detail::std::forward<X>(x)...);
+    }
+#endif
 #endif
 }} // end namespace boost::hana
 

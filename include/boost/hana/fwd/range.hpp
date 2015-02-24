@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_RANGE_HPP
 #define BOOST_HANA_FWD_RANGE_HPP
 
+#include <boost/hana/config.hpp>
 #include <boost/hana/core/operators.hpp>
 #include <boost/hana/fwd/core/make.hpp>
 #include <boost/hana/fwd/integral_constant.hpp>
@@ -123,9 +124,11 @@ namespace boost { namespace hana {
     //! Example
     //! -------
     //! @snippet example/range.cpp range_c
+#if defined(BOOST_HANA_DOXYGEN_INVOKED) || defined(BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES)
     template <typename T, T from, T to>
     constexpr auto range_c = make<Range>(integral_constant<T, from>,
                                          integral_constant<T, to>);
+#endif
 }} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_RANGE_HPP

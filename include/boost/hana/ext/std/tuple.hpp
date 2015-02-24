@@ -154,7 +154,7 @@ namespace boost { namespace hana {
     struct is_empty_impl<ext::std::Tuple> {
         template <typename ...Xs>
         static constexpr auto apply(::std::tuple<Xs...> const&)
-        { return bool_<sizeof...(Xs) == 0>; }
+        { return _bool<sizeof...(Xs) == 0>{}; }
     };
 
     template <>

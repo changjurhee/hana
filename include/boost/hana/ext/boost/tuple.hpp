@@ -45,11 +45,11 @@ namespace boost { namespace hana {
     template <>
     struct is_empty_impl<ext::boost::Tuple> {
         static constexpr auto apply(::boost::tuples::null_type const&)
-        { return true_; }
+        { return _true{}; }
 
         template <typename H, typename T>
         static constexpr auto apply(::boost::tuples::cons<H, T> const&)
-        { return false_; }
+        { return _false{}; }
     };
 
     //////////////////////////////////////////////////////////////////////////

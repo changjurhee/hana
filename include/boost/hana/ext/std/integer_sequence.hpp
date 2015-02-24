@@ -40,15 +40,15 @@ namespace boost { namespace hana {
             // sizeof...(xs) != sizeof...(ys)
             char(*)[sizeof...(xs) == sizeof...(ys)] = 0)
         {
-            return bool_<detail::std::is_same<
+            return _bool<detail::std::is_same<
                 ::std::integer_sequence<bool, (xs == ys)...>,
                 ::std::integer_sequence<bool, (xs, true)...>
-            >::value>;
+            >::value>{};
         }
 
         template <typename Xs, typename Ys>
-        static constexpr auto apply(Xs, Ys, ...)
-        { return false_; }
+        static constexpr _bool<false> apply(Xs, Ys, ...)
+        { return {}; }
     };
 
     //////////////////////////////////////////////////////////////////////////
@@ -98,7 +98,7 @@ namespace boost { namespace hana {
     struct is_empty_impl<ext::std::IntegerSequence> {
         template <typename T, T ...xs>
         static constexpr auto apply(::std::integer_sequence<T, xs...>)
-        { return bool_<sizeof...(xs) == 0>; }
+        { return _bool<sizeof...(xs) == 0>{}; }
     };
 }} // end namespace boost::hana
 

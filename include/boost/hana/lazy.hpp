@@ -13,6 +13,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/fwd/lazy.hpp>
 
 #include <boost/hana/applicative.hpp>
+#include <boost/hana/config.hpp>
 #include <boost/hana/core/operators.hpp>
 #include <boost/hana/detail/closure.hpp>
 #include <boost/hana/detail/create.hpp>
@@ -49,9 +50,11 @@ namespace boost { namespace hana {
         constexpr decltype(auto) eval_impl(Id _) const&
         { return _(f)(static_cast<X const&>(x).get...); }
 
+#ifndef BOOST_HANA_CONFIG_CONSTEXPR_MEMBER_FUNCTION_IS_CONST
         template <typename Id>
         constexpr decltype(auto) eval_impl(Id _) &
         { return _(f)(static_cast<X&>(x).get...); }
+#endif
 
         template <typename Id>
         constexpr decltype(auto) eval_impl(Id _) &&
@@ -67,9 +70,11 @@ namespace boost { namespace hana {
         constexpr decltype(auto) eval_impl(Id const&) const&
         { return x; }
 
+#ifndef BOOST_HANA_CONFIG_CONSTEXPR_MEMBER_FUNCTION_IS_CONST
         template <typename Id>
         constexpr decltype(auto) eval_impl(Id const&) &
         { return x; }
+#endif
 
         template <typename Id>
         constexpr decltype(auto) eval_impl(Id const&) &&
@@ -85,6 +90,7 @@ namespace boost { namespace hana {
             );
         }
 
+#ifndef BOOST_HANA_CONFIG_CONSTEXPR_MEMBER_FUNCTION_IS_CONST
         template <typename ...Xs>
         constexpr decltype(auto) operator()(Xs&& ...xs) & {
             return detail::create<_lazy_call>{}(
@@ -93,6 +99,7 @@ namespace boost { namespace hana {
                 )
             );
         }
+#endif
 
         template <typename ...Xs>
         constexpr decltype(auto) operator()(Xs&& ...xs) && {
@@ -107,10 +114,12 @@ namespace boost { namespace hana {
     //////////////////////////////////////////////////////////////////////////
     // Operators
     //////////////////////////////////////////////////////////////////////////
-    template <>
-    struct operators::of<Lazy>
-        : operators::of<Monad>
-    { };
+    namespace operators {
+        template <>
+        struct of<Lazy>
+            : operators::of<Monad>
+        { };
+    }
 
     //////////////////////////////////////////////////////////////////////////
     // Functor
@@ -146,9 +155,11 @@ namespace boost { namespace hana {
             constexpr decltype(auto) eval_impl(Id _) const&
             { return _(eval)(lf)(_(eval)(lx)); }
 
+#ifndef BOOST_HANA_CONFIG_CONSTEXPR_MEMBER_FUNCTION_IS_CONST
             template <typename Id>
             constexpr decltype(auto) eval_impl(Id _) &
             { return _(eval)(lf)(_(eval)(lx)); }
+#endif
 
             template <typename Id>
             constexpr decltype(auto) eval_impl(Id _) && {

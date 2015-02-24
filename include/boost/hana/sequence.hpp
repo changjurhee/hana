@@ -362,7 +362,7 @@ namespace boost { namespace hana {
     struct _remove_at_c {
         template <typename Xs>
         constexpr decltype(auto) operator()(Xs&& xs) const
-        { return hana::remove_at(size_t<n>, detail::std::forward<Xs>(xs)); }
+        { return hana::remove_at(_size_t<n>{}, detail::std::forward<Xs>(xs)); }
     };
 
     //////////////////////////////////////////////////////////////////////////
@@ -504,7 +504,7 @@ namespace boost { namespace hana {
         template <typename Xs>
         constexpr decltype(auto) operator()(Xs&& xs) const {
             return hana::slice(detail::std::forward<Xs>(xs),
-                                size_t<from>, size_t<to>);
+                                _size_t<from>{}, _size_t<to>{});
         }
     };
 
@@ -594,7 +594,7 @@ namespace boost { namespace hana {
     struct take_exactly_impl<S, when<condition>> : default_ {
         template <typename N, typename Xs>
         static constexpr auto apply(N n, Xs xs) {
-            return hana::eval_if(hana::equal(n, size_t<0>),
+            return hana::eval_if(hana::equal(n, _size_t<0>{}),
                 hana::always(empty<S>()),
                 [=](auto _) {
                     return hana::prepend(_(head)(xs),
@@ -615,7 +615,7 @@ namespace boost { namespace hana {
         template <typename N, typename Xs>
         static constexpr decltype(auto) apply(N n, Xs xs) {
             return hana::eval_if(
-                hana::or_(hana::equal(n, size_t<0>), hana::is_empty(xs)),
+                hana::or_(hana::equal(n, _size_t<0>{}), hana::is_empty(xs)),
                 hana::always(empty<S>()),
                 [=](auto _) {
                     return hana::prepend(_(head)(xs),
@@ -632,7 +632,7 @@ namespace boost { namespace hana {
     struct _take_c {
         template <typename Xs>
         constexpr decltype(auto) operator()(Xs&& xs) const {
-            return hana::take(size_t<n>, detail::std::forward<Xs>(xs));
+            return hana::take(_size_t<n>{}, detail::std::forward<Xs>(xs));
         }
     };
 
@@ -687,7 +687,7 @@ namespace boost { namespace hana {
             template <typename Pred, typename Xs>
             static constexpr decltype(auto)
             helper(Pred&& pred, Xs&& xs, detail::std::true_type)
-            { return false_; }
+            { return _false{}; }
 
             template <typename Pred, typename Xs>
             constexpr decltype(auto) operator()(Pred&& pred, Xs&& xs) const {
@@ -930,15 +930,15 @@ namespace boost { namespace hana {
 
         template <typename Xs, typename Ys>
         static constexpr auto less_helper(Xs const&, Ys const&, yes, yes)
-        { return false_; }
+        { return _false{}; }
 
         template <typename Xs, typename Ys>
         static constexpr auto less_helper(Xs const&, Ys const&, yes, no)
-        { return true_; }
+        { return _true{}; }
 
         template <typename Xs, typename Ys>
         static constexpr auto less_helper(Xs const&, Ys const&, no, yes)
-        { return false_; }
+        { return _false{}; }
 
         template <typename Xs, typename Ys>
         static constexpr auto less_helper(Xs const& xs, Ys const& ys, no, no) {

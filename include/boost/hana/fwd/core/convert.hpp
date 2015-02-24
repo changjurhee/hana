@@ -10,6 +10,9 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_CORE_CONVERT_HPP
 #define BOOST_HANA_FWD_CORE_CONVERT_HPP
 
+#include <boost/hana/config.hpp>
+
+
 namespace boost { namespace hana {
     //! @ingroup group-core
     //! Converts an object from one data type to another.
@@ -96,8 +99,14 @@ namespace boost { namespace hana {
     template <typename To>
     struct _to;
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <typename To>
     constexpr _to<To> to{};
+#else
+    template <typename To, typename X>
+    constexpr decltype(auto) to(X&& x)
+    { return _to<To>{}(static_cast<X&&>(x)); }
+#endif
 #endif
 
     //! @ingroup group-core

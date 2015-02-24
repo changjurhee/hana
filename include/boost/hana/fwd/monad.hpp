@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_MONAD_HPP
 #define BOOST_HANA_FWD_MONAD_HPP
 
+#include <boost/hana/config.hpp>
 #include <boost/hana/core/datatype.hpp>
 #include <boost/hana/core/operators.hpp>
 #include <boost/hana/detail/std/forward.hpp>
@@ -234,8 +235,16 @@ namespace boost { namespace hana {
         }
     };
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <typename M>
     constexpr _mcompose<M> mcompose{};
+#else
+    template <typename M, typename F, typename G>
+    constexpr decltype(auto) mcompose(F&& f, G&& g) {
+        return _mcompose<M>{}(detail::std::forward<F>(f),
+                              detail::std::forward<G>(g));
+    }
+#endif
 #endif
 
     //! Sequentially compose two monadic actions, discarding any value
@@ -319,14 +328,22 @@ namespace boost { namespace hana {
         }
     };
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <typename M>
     constexpr _tap<M> tap{};
+#else
+    template <typename M, typename F>
+    constexpr decltype(auto) tap(F&& f)
+    { return _tap<M>{}(detail::std::forward<F>(f)); }
+#endif
 #endif
 
-    template <>
-    struct operators::of<Monad>
-        : decltype(bind)
-    { };
+    namespace operators {
+        template <>
+        struct of<Monad>
+            : decltype(bind)
+        { };
+    }
 }} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_MONAD_HPP

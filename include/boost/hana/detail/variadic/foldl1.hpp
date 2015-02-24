@@ -96,16 +96,16 @@ namespace boost { namespace hana { namespace detail { namespace variadic {
     template <typename ...Xs, typename F>
     constexpr decltype(auto) foldl1_helper(F&& f, ...) {
         return foldl1_impl<foldl1_next(sizeof...(Xs))>::apply(
-            detail::std::forward<F>(f), type<Xs>...
+            detail::std::forward<F>(f), make_type<Xs>()...
         );
     }
 
     template <typename ...Xs, typename F>
     constexpr auto foldl1_helper(F, Metafunction*) {
-        return type<
+        return make_type<
             typename foldl1_impl<foldl1_next(sizeof...(Xs))>::
             template apply_t<F::template apply, Xs...>
-        >;
+        >();
     }
 
     template <typename ...Xs, typename F>

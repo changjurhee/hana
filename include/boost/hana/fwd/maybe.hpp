@@ -270,7 +270,7 @@ namespace boost { namespace hana {
 #else
     struct _is_just {
         template <typename M>
-        constexpr decltype(auto) operator()(M const&) const;
+        constexpr auto operator()(M const&) const;
     };
 
     constexpr _is_just is_just{};
@@ -293,7 +293,7 @@ namespace boost { namespace hana {
 #else
     struct _is_nothing {
         template <typename M>
-        constexpr decltype(auto) operator()(M const&) const;
+        constexpr auto operator()(M const&) const;
     };
 
     constexpr _is_nothing is_nothing{};

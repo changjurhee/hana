@@ -40,7 +40,7 @@ namespace boost { namespace hana {
             "no definition of boost::hana::transform for the given data type");
 
             return hana::adjust(detail::std::forward<Xs>(xs),
-                                hana::always(true_),
+                                hana::always(_bool<true>{}),
                                 detail::std::forward<F>(f));
         }
     };

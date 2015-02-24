@@ -10,6 +10,9 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_RECORD_HPP
 #define BOOST_HANA_FWD_RECORD_HPP
 
+#include <boost/hana/config.hpp>
+
+
 namespace boost { namespace hana {
     //! @ingroup group-concepts
     //! The `Record` concept represents record-like user-defined types.
@@ -112,8 +115,14 @@ namespace boost { namespace hana {
         { return members_impl<R>::apply(); }
     };
 
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
     template <typename R>
     constexpr _members<R> members{};
+#else
+    template <typename R>
+    constexpr decltype(auto) members()
+    { return _members<R>{}(); }
+#endif
 #endif
 }} // end namespace boost::hana
 
