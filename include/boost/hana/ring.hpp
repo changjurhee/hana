@@ -68,7 +68,7 @@ namespace boost { namespace hana {
     // Cross-type overload
     template <typename T, typename U>
     struct mult_impl<T, U, when<
-        detail::has_nontrivial_common_embedding<Ring, T, U>{}
+        detail::has_nontrivial_common_embedding<Ring, T, U>{}()
     >> {
         using C = typename common<T, U>::type;
         template <typename X, typename Y>
@@ -130,14 +130,14 @@ namespace boost { namespace hana {
     // Model for non-boolean arithmetic data types
     //////////////////////////////////////////////////////////////////////////
     template <typename T>
-    struct mult_impl<T, T, when<detail::std::is_non_boolean_arithmetic<T>{}>> {
+    struct mult_impl<T, T, when<detail::std::is_non_boolean_arithmetic<T>{}()>> {
         template <typename X, typename Y>
         static constexpr decltype(auto) apply(X&& x, Y&& y)
         { return detail::std::forward<X>(x) * detail::std::forward<Y>(y); }
     };
 
     template <typename T>
-    struct one_impl<T, when<detail::std::is_non_boolean_arithmetic<T>{}>> {
+    struct one_impl<T, when<detail::std::is_non_boolean_arithmetic<T>{}()>> {
         static constexpr T apply()
         { return static_cast<T>(1); }
     };

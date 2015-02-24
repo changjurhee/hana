@@ -8,6 +8,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_TEST_TEST_CNUMERIC_HPP
 
 #include <boost/hana/comparable.hpp>
+#include <boost/hana/config.hpp>
 #include <boost/hana/constant.hpp>
 #include <boost/hana/core/convert.hpp>
 #include <boost/hana/core/is_a.hpp>
@@ -24,7 +25,7 @@ namespace boost { namespace hana {
         struct CNumeric { using value_type = T; };
 
         template <typename T, T v>
-        struct cnumeric_type {
+        struct _cnumeric {
             static constexpr T value = v;
             struct hana { using datatype = CNumeric<T>; };
 
@@ -32,8 +33,17 @@ namespace boost { namespace hana {
             constexpr operator bool() const { return value; }
         };
 
+        //! @todo Remove this; for bw compat.
         template <typename T, T v>
-        constexpr cnumeric_type<T, v> cnumeric{};
+        using cnumeric_type = _cnumeric<T, v>;
+
+#ifdef BOOST_HANA_CONFIG_HAS_VARIABLE_TEMPLATES
+        template <typename T, T v>
+        constexpr _cnumeric<T, v> cnumeric{};
+#endif
+
+        template <typename T, T v>
+        constexpr _cnumeric<T, v> make_cnumeric() { return {}; }
     }
 
     //////////////////////////////////////////////////////////////////////////
@@ -60,7 +70,7 @@ namespace boost { namespace hana {
         template <typename X>
         static constexpr auto apply(X x) {
             constexpr auto v = hana::value(x);
-            return test::cnumeric<T, static_cast<T>(v)>;
+            return test::make_cnumeric<T, static_cast<T>(v)>();
         }
     };
 
@@ -71,7 +81,7 @@ namespace boost { namespace hana {
     struct equal_impl<test::CNumeric<T>, test::CNumeric<U>> {
         template <typename X, typename Y>
         static constexpr auto apply(X x, Y y)
-        { return test::cnumeric<bool, X::value == Y::value>; }
+        { return test::make_cnumeric<bool, X::value == Y::value>(); }
     };
 
     //////////////////////////////////////////////////////////////////////////
@@ -81,7 +91,7 @@ namespace boost { namespace hana {
     struct less_impl<test::CNumeric<T>, test::CNumeric<U>> {
         template <typename X, typename Y>
         static constexpr auto apply(X x, Y y)
-        { return test::cnumeric<bool, (X::value < Y::value)>; }
+        { return test::make_cnumeric<bool, (X::value < Y::value)>(); }
     };
 }}
 

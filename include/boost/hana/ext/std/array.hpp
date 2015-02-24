@@ -139,7 +139,7 @@ namespace boost { namespace hana {
     struct empty_impl<ext::std::Array> {
         struct anything { };
         static constexpr auto apply()
-        { return ::std::array<anything, 0>{}; }
+        { return ::std::array<anything, 0>{{}}; }
     };
 
     //////////////////////////////////////////////////////////////////////////

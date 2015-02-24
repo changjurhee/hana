@@ -166,13 +166,13 @@ Distributed under the Boost Software License, Version 1.0.
         do {                                                                \
             auto tmpvar = expr;                                             \
             ::boost::hana::eval_if(                                         \
-                ::boost::hana::bool_<                                       \
+                ::boost::hana::_bool<                                       \
                     ::boost::hana::models<                                  \
                         ::boost::hana::Constant(                            \
                             ::boost::hana::datatype_t<decltype(tmpvar)>     \
                         )                                                   \
                     >{}                                                     \
-                >,                                                          \
+                >{},                                                        \
                 [=](auto _) {                                               \
                     auto copy = _(tmpvar);                                  \
                     static_assert(::boost::hana::value(copy), # expr);      \

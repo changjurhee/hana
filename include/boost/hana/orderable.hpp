@@ -128,7 +128,7 @@ namespace boost { namespace hana {
     // Cross-type overload
     template <typename T, typename U>
     struct less_equal_impl<T, U, when<
-        detail::has_nontrivial_common_embedding<Orderable, T, U>{}
+        detail::has_nontrivial_common_embedding<Orderable, T, U>{}()
     >> {
         using C = typename common<T, U>::type;
         template <typename X, typename Y>
@@ -162,7 +162,7 @@ namespace boost { namespace hana {
     // Cross-type overload
     template <typename T, typename U>
     struct greater_impl<T, U, when<
-        detail::has_nontrivial_common_embedding<Orderable, T, U>{}
+        detail::has_nontrivial_common_embedding<Orderable, T, U>{}()
     >> {
         using C = typename common<T, U>::type;
         template <typename X, typename Y>
@@ -196,7 +196,7 @@ namespace boost { namespace hana {
     // Cross-type overload
     template <typename T, typename U>
     struct greater_equal_impl<T, U, when<
-        detail::has_nontrivial_common_embedding<Orderable, T, U>{}
+        detail::has_nontrivial_common_embedding<Orderable, T, U>{}()
     >> {
         using C = typename common<T, U>::type;
         template <typename X, typename Y>
@@ -286,7 +286,7 @@ namespace boost { namespace hana {
     // Model for LessThanComparable data types
     //////////////////////////////////////////////////////////////////////////
     template <typename T, typename U>
-    struct less_impl<T, U, when<detail::concept::LessThanComparable<T, U>{}>> {
+    struct less_impl<T, U, when<detail::concept::LessThanComparable<T, U>{}()>> {
         template <typename X, typename Y>
         static constexpr decltype(auto) apply(X&& x, Y&& y)
         { return detail::std::forward<X>(x) < detail::std::forward<Y>(y); }

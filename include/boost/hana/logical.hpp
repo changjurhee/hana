@@ -237,21 +237,21 @@ namespace boost { namespace hana {
     // Model for arithmetic data types
     //////////////////////////////////////////////////////////////////////////
     template <typename L>
-    struct eval_if_impl<L, when<detail::std::is_arithmetic<L>{}>> {
+    struct eval_if_impl<L, when<detail::std::is_arithmetic<L>{}()>> {
         template <typename Cond, typename T, typename E>
         static constexpr auto apply(Cond cond, T t, E e)
         { return cond ? t(id) : e(id); }
     };
 
     template <typename L>
-    struct not_impl<L, when<detail::std::is_arithmetic<L>{}>> {
+    struct not_impl<L, when<detail::std::is_arithmetic<L>{}()>> {
         template <typename Cond>
         static constexpr Cond apply(Cond cond)
         { return static_cast<Cond>(cond ? false : true); }
     };
 
     template <typename L>
-    struct while_impl<L, when<detail::std::is_arithmetic<L>{}>> {
+    struct while_impl<L, when<detail::std::is_arithmetic<L>{}()>> {
         template <typename Pred, typename State, typename F>
         static auto apply(Pred&& pred, State&& state, F&& f)
             -> decltype(

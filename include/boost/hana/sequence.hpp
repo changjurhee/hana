@@ -866,7 +866,7 @@ namespace boost { namespace hana {
     // make
     //////////////////////////////////////////////////////////////////////////
     template <typename S>
-    struct make_impl<S, when<models<Sequence(S)>{}>> {
+    struct make_impl<S, when<models<Sequence(S)>{}()>> {
         template <typename ...X>
         static constexpr decltype(auto) apply(X&& ...x) {
             return detail::variadic::foldr(prepend, empty<S>(),
@@ -993,7 +993,7 @@ namespace boost { namespace hana {
     };
 
     template <typename S>
-    struct transform_impl<S, when<models<Sequence(S)>{}>>
+    struct transform_impl<S, when<models<Sequence(S)>{}()>>
         : Sequence::transform_impl<S>
     { };
 
@@ -1008,12 +1008,12 @@ namespace boost { namespace hana {
     };
 
     template <typename S>
-    struct ap_impl<S, when<models<Sequence(S)>{}>>
+    struct ap_impl<S, when<models<Sequence(S)>{}()>>
         : Monad::ap_impl<S>
     { };
 
     template <typename S>
-    struct lift_impl<S, when<models<Sequence(S)>{}>>
+    struct lift_impl<S, when<models<Sequence(S)>{}()>>
         : Sequence::lift_impl<S>
     { };
 
@@ -1028,7 +1028,7 @@ namespace boost { namespace hana {
     };
 
     template <typename S>
-    struct flatten_impl<S, when<models<Sequence(S)>{}>>
+    struct flatten_impl<S, when<models<Sequence(S)>{}()>>
         : Sequence::flatten_impl<S>
     { };
 
@@ -1045,7 +1045,7 @@ namespace boost { namespace hana {
     };
 
     template <typename S>
-    struct concat_impl<S, when<models<Sequence(S)>{}>>
+    struct concat_impl<S, when<models<Sequence(S)>{}()>>
         : Sequence::concat_impl<S>
     { };
 
@@ -1053,22 +1053,22 @@ namespace boost { namespace hana {
     // Automatic model of Foldable
     //////////////////////////////////////////////////////////////////////////
     template <typename S>
-    struct foldl_impl<S, when<models<Sequence(S)>{}>>
+    struct foldl_impl<S, when<models<Sequence(S)>{}()>>
         : Iterable::foldl_impl<S>
     { };
 
     template <typename S>
-    struct foldr_impl<S, when<models<Sequence(S)>{}>>
+    struct foldr_impl<S, when<models<Sequence(S)>{}()>>
         : Iterable::foldr_impl<S>
     { };
 
     template <typename S>
-    struct foldl1_impl<S, when<models<Sequence(S)>{}>>
+    struct foldl1_impl<S, when<models<Sequence(S)>{}()>>
         : Iterable::foldl1_impl<S>
     { };
 
     template <typename S>
-    struct foldr1_impl<S, when<models<Sequence(S)>{}>>
+    struct foldr1_impl<S, when<models<Sequence(S)>{}()>>
         : Iterable::foldr1_impl<S>
     { };
 
@@ -1076,12 +1076,12 @@ namespace boost { namespace hana {
     // Automatic model of Searchable
     //////////////////////////////////////////////////////////////////////////
     template <typename S>
-    struct find_impl<S, when<models<Sequence(S)>{}>>
+    struct find_impl<S, when<models<Sequence(S)>{}()>>
         : Iterable::find_impl<S>
     { };
 
     template <typename S>
-    struct any_impl<S, when<models<Sequence(S)>{}>>
+    struct any_impl<S, when<models<Sequence(S)>{}()>>
         : Iterable::any_impl<S>
     { };
 
@@ -1114,7 +1114,7 @@ namespace boost { namespace hana {
     };
 
     template <typename S>
-    struct traverse_impl<S, when<models<Sequence(S)>{}>>
+    struct traverse_impl<S, when<models<Sequence(S)>{}()>>
         : Sequence::traverse_impl<S>
     { };
 

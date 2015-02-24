@@ -76,7 +76,7 @@ namespace boost { namespace hana {
     }
 
     template <typename R>
-    struct equal_impl<R, R, when<models<Record(R)>{}>> {
+    struct equal_impl<R, R, when<models<Record(R)>{}()>> {
         template <typename X, typename Y>
         static constexpr decltype(auto) apply(X&& x, Y&& y) {
             return hana::all(members<R>(),
@@ -107,7 +107,7 @@ namespace boost { namespace hana {
     }
 
     template <typename R>
-    struct unpack_impl<R, when<models<Record(R)>{}>> {
+    struct unpack_impl<R, when<models<Record(R)>{}()>> {
         template <typename Udt, typename F>
         static constexpr decltype(auto) apply(Udt&& udt, F&& f) {
             return hana::unpack(hana::members<R>(),
@@ -134,7 +134,7 @@ namespace boost { namespace hana {
     }
 
     template <typename R>
-    struct find_impl<R, when<models<Record(R)>{}>> {
+    struct find_impl<R, when<models<Record(R)>{}()>> {
         template <typename X, typename Pred>
         static constexpr decltype(auto) apply(X&& x, Pred&& pred) {
             return hana::transform(
@@ -147,7 +147,7 @@ namespace boost { namespace hana {
     };
 
     template <typename R>
-    struct any_impl<R, when<models<Record(R)>{}>> {
+    struct any_impl<R, when<models<Record(R)>{}()>> {
         template <typename X, typename Pred>
         static constexpr decltype(auto) apply(X const&, Pred&& pred) {
             return hana::any(members<R>(),

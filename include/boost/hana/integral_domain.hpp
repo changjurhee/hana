@@ -70,7 +70,7 @@ namespace boost { namespace hana {
     // Cross-type overload
     template <typename T, typename U>
     struct quot_impl<T, U, when<
-        detail::has_nontrivial_common_embedding<IntegralDomain, T, U>{}
+        detail::has_nontrivial_common_embedding<IntegralDomain, T, U>{}()
     >> {
         using C = typename common<T, U>::type;
         template <typename X, typename Y>
@@ -98,7 +98,7 @@ namespace boost { namespace hana {
     // Cross-type overload
     template <typename T, typename U>
     struct mod_impl<T, U, when<
-        detail::has_nontrivial_common_embedding<IntegralDomain, T, U>{}
+        detail::has_nontrivial_common_embedding<IntegralDomain, T, U>{}()
     >> {
         using C = typename common<T, U>::type;
         template <typename X, typename Y>
@@ -123,14 +123,14 @@ namespace boost { namespace hana {
     // Model for integral data types
     //////////////////////////////////////////////////////////////////////////
     template <typename T>
-    struct quot_impl<T, T, when<detail::std::is_non_boolean_integral<T>{}>> {
+    struct quot_impl<T, T, when<detail::std::is_non_boolean_integral<T>{}()>> {
         template <typename X, typename Y>
         static constexpr decltype(auto) apply(X&& x, Y&& y)
         { return detail::std::forward<X>(x) / detail::std::forward<Y>(y); }
     };
 
     template <typename T>
-    struct mod_impl<T, T, when<detail::std::is_non_boolean_integral<T>{}>> {
+    struct mod_impl<T, T, when<detail::std::is_non_boolean_integral<T>{}()>> {
         template <typename X, typename Y>
         static constexpr decltype(auto) apply(X&& x, Y&& y)
         { return detail::std::forward<X>(x) % detail::std::forward<Y>(y); }
