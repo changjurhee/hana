@@ -22,6 +22,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/foldable.hpp>
 #include <boost/hana/functional/compose.hpp>
 #include <boost/hana/functional/curry.hpp>
+#include <boost/hana/functional/flip.hpp>
 #include <boost/hana/functional/partial.hpp>
 #include <boost/hana/functor.hpp>
 #include <boost/hana/iterable.hpp>
@@ -516,26 +517,34 @@ namespace boost { namespace hana {
 
     template <typename S, bool condition>
     struct sort_by_impl<S, when<condition>> : default_ {
+        struct second_if {
+            template <typename Pred, typename Xs, typename Id>
+            constexpr decltype(auto) operator()(Pred pred, Xs xs, Id _) const {
+                auto pivot = hana::head(xs);
+                auto rest = hana::tail(xs);
+                auto parts = hana::partition(rest, hana::partial(hana::flip(pred), pivot));
+                return hana::concat(
+                    apply(pred, hana::first(parts)),
+                    hana::prepend(pivot, apply(pred, hana::second(parts)))
+                );
+            }
+        };
+
+        struct first_if {
+            template <typename Pred, typename Xs, typename Id>
+            constexpr decltype(auto) operator()(Pred pred, Xs xs, Id _) const {
+                return hana::eval_if(hana::is_empty(hana::tail(xs)),
+                    hana::always(xs),
+                    hana::partial(second_if{}, pred, xs)
+                );
+            }
+        };
+
         template <typename Pred, typename Xs>
         static constexpr auto apply(Pred pred, Xs xs) {
-            return eval_if(is_empty(xs),
-                always(xs),
-                [=](auto _) {
-                    return eval_if(is_empty(_(tail)(xs)),
-                        always(xs),
-                        [=](auto _) {
-                            auto pivot = _(head)(xs);
-                            auto rest = _(tail)(xs);
-                            auto parts = partition(rest, [=](auto x) {
-                                return pred(x, pivot);
-                            });
-                            return concat(
-                                apply(pred, first(parts)),
-                                prepend(pivot, apply(pred, second(parts)))
-                            );
-                        }
-                    );
-                }
+            return hana::eval_if(hana::is_empty(xs),
+                hana::always(xs),
+                hana::partial(first_if{}, pred, xs)
             );
         }
     };

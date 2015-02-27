@@ -194,7 +194,7 @@ namespace boost { namespace hana {
             return apply_impl(
                 detail::std::forward<F>(f), detail::std::forward<X>(x),
                 detail::std::integral_constant<bool,
-                    hana::value(f_is_just) && hana::value(x_is_just)
+                    hana::value2<decltype(f_is_just)>() && hana::value2<decltype(x_is_just)>()
                 >{}
             );
         }

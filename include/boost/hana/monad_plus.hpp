@@ -151,7 +151,7 @@ namespace boost { namespace hana {
     struct cycle_impl<M, when<condition>> : default_ {
         template <typename N, typename Xs>
         static constexpr decltype(auto) apply(N n, Xs const& xs) {
-            constexpr detail::std::size_t n_ = hana::value(n);
+            constexpr detail::std::size_t n_ = hana::value2<decltype(n)>();
             return mdetail::cycle_helper<M, n_>::apply(xs);
         }
     };

@@ -194,6 +194,11 @@ namespace boost { namespace hana {
     };
 
     constexpr _value value{};
+
+    template <typename C>
+    constexpr decltype(auto) value2() {
+        return hana::value(C{});
+    }
 #endif
 }} // end namespace boost::hana
 

@@ -290,7 +290,7 @@ namespace boost { namespace hana {
 
         template <typename Cond, typename Then, typename Else>
         static constexpr auto apply(Cond cond_, Then t, Else e) {
-            constexpr auto cond = boost::hana::value(cond_);
+            constexpr auto cond = boost::hana::value2<decltype(cond_)>();
             constexpr bool truth_value = hana::if_(cond, true, false);
             return eval_if_helper(
                     detail::std::integral_constant<bool, truth_value>{}, t, e);
@@ -344,7 +344,7 @@ namespace boost { namespace hana {
             // understanding what must be done here should give us a better
             // understanding of something non-trivial.
             auto cond_ = pred(state);
-            constexpr auto cond = hana::value(cond_);
+            constexpr auto cond = hana::value2<decltype(cond_)>();
             constexpr bool truth_value = hana::if_(cond, true, false);
             return while_helper(detail::std::integral_constant<bool, truth_value>{},
                                 detail::std::forward<Pred>(pred),

@@ -212,7 +212,7 @@ namespace boost { namespace hana {
     struct at_impl<Tuple> {
         template <typename N, typename Xs>
         static constexpr decltype(auto) apply(N n, Xs&& xs) {
-            constexpr detail::std::size_t index = hana::value(n);
+            constexpr detail::std::size_t index = hana::value2<decltype(n)>();
             return detail::get<index>(detail::std::forward<Xs>(xs));
         }
     };
@@ -259,7 +259,7 @@ namespace boost { namespace hana {
 
         template <typename N, typename Xs>
         static constexpr decltype(auto) apply(N n_, Xs&& xs) {
-            constexpr Size n = hana::value(n_);
+            constexpr Size n = hana::value2<decltype(n_)>();
             constexpr Size size = tuple_detail::size<Xs>{}();
             constexpr Size drop_size = n > size ? size : n;
             return drop_helper<drop_size>(detail::std::forward<Xs>(xs),
@@ -441,7 +441,7 @@ namespace boost { namespace hana {
 
         template <typename N, typename X>
         static constexpr decltype(auto) apply(N n_, X&& x) {
-            constexpr detail::std::size_t n = hana::value(n_);
+            constexpr detail::std::size_t n = hana::value2<decltype(n_)>();
             return repeat_helper(detail::std::forward<X>(x),
                                  detail::std::make_index_sequence<n>{});
         }
@@ -573,7 +573,7 @@ namespace boost { namespace hana {
 
         template <typename N, typename Xs>
         static constexpr decltype(auto) apply(N n, Xs&& xs) {
-            constexpr Size index = hana::value(n);
+            constexpr Size index = hana::value2<decltype(n)>();
             constexpr Size size = tuple_detail::size<Xs>{}();
             return remove_at_helper(detail::std::forward<Xs>(xs),
                           detail::std::make_index_sequence<index>{},
@@ -609,8 +609,8 @@ namespace boost { namespace hana {
 
         template <typename Xs, typename From, typename To>
         static constexpr decltype(auto) apply(Xs&& xs, From from_, To to_) {
-            constexpr detail::std::size_t from = hana::value(from_);
-            constexpr detail::std::size_t to = hana::value(to_);
+            constexpr detail::std::size_t from = hana::value2<decltype(from_)>();
+            constexpr detail::std::size_t to = hana::value2<decltype(to_)>();
             return slice_helper<from>(detail::std::forward<Xs>(xs),
                                 detail::std::make_index_sequence<to - from>{});
         }
@@ -670,7 +670,7 @@ namespace boost { namespace hana {
 
         template <typename N, typename Xs>
         static constexpr decltype(auto) apply(N n_, Xs&& xs) {
-            constexpr detail::std::size_t n = hana::value(n_);
+            constexpr detail::std::size_t n = hana::value2<decltype(n_)>();
             constexpr detail::std::size_t size = tuple_detail::size<Xs>{}();
             return take_helper(detail::std::forward<Xs>(xs),
                 detail::std::make_index_sequence<(n < size ? n : size)>{});

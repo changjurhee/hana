@@ -172,7 +172,7 @@ namespace boost { namespace hana {
 
         template <typename X>
         static constexpr auto apply(X x) {
-            constexpr auto v = hana::value(x);
+            constexpr auto v = hana::value2<decltype(x)>();
             return _integral_constant<T, static_cast<T>(v)>{};
         }
     };

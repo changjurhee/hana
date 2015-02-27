@@ -48,11 +48,11 @@ namespace boost { namespace hana { namespace test {
         // laws
         {
             for_each(objects<C>, [](auto c) {
-                constexpr auto must_be_constexpr = hana::value(c);
+                constexpr auto must_be_constexpr = hana::value2<decltype(c)>();
                 (void)must_be_constexpr;
 
 
-                using T = decltype(hana::value(c));
+                using T = decltype(hana::value2<decltype(c)>());
                 static_assert(detail::std::is_same<
                     datatype_t<T>,
                     typename C::value_type
@@ -70,7 +70,7 @@ namespace boost { namespace hana { namespace test {
                 using Underlying = typename C::value_type;
                 BOOST_HANA_CHECK(equal(
                     to<Underlying>(c),
-                    make<Underlying>(hana::value(c))
+                    make<Underlying>(hana::value2<decltype(c)>())
                 ));
             });
         }

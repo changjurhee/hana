@@ -315,8 +315,10 @@ int main() {
     {
         // 1 function
         {
+#if 0 // excess elements in struct initializer with Clang 3.5
             auto f = overload([](int) { return x<1>; });
             BOOST_HANA_CONSTANT_CHECK(equal(f(int{}), x<1>));
+#endif
         }
 
         // 2 functions
@@ -368,10 +370,12 @@ int main() {
             struct convertible_to_int { operator int() const { return 1; } };
             auto f = [](int) { return x<0>; };
 
+#if 0 // excess elements in struct initializer with Clang 3.5
             BOOST_HANA_CONSTANT_CHECK(equal(
                 overload(f)(convertible_to_int{}),
                 x<0>
             ));
+#endif
 
             BOOST_HANA_CONSTANT_CHECK(equal(
                 overload(static_cast<decltype(x<0>)(*)(int)>(f))(convertible_to_int{}),

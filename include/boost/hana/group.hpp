@@ -103,8 +103,10 @@ namespace boost { namespace hana {
         template <typename X>
         static constexpr decltype(auto) apply(X&& x) {
             using G = detail::dependent_on_t<sizeof(x) == 1, T>;
-            static_assert(!is_default<minus_impl<G, G>>::value,
+#if 0       // clang blows up when this is enabled, IDK why
+            static_assert(!is_default<minus_impl<G, G>>{},
             "no definition of boost::hana::negate for the given data type");
+#endif
 
             return hana::minus(zero<T>(), detail::std::forward<X>(x));
         }

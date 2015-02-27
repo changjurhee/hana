@@ -41,7 +41,7 @@ namespace boost { namespace hana {
     >> {
         template <typename N>
         static constexpr auto apply(N n) {
-            constexpr auto v = hana::value(n);
+            constexpr auto v = hana::value2<decltype(n)>();
             return ::std::ratio<v>{};
         }
     };

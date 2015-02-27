@@ -151,7 +151,7 @@ Distributed under the Boost Software License, Version 1.0.
         >{}(),                                                              \
         "the expression " # expr " does not yield a Constant");             \
                                                                             \
-        static_assert(::boost::hana::value(tmpvar), # expr)                 \
+        static_assert(::boost::hana::value2<decltype(tmpvar)>(), # expr)                 \
     /**/
 
 #   define BOOST_HANA_CONSTANT_CHECK(...)                                   \
@@ -175,7 +175,7 @@ Distributed under the Boost Software License, Version 1.0.
                 >{},                                                        \
                 [=](auto _) {                                               \
                     auto copy = _(tmpvar);                                  \
-                    static_assert(::boost::hana::value(copy), # expr);      \
+                    static_assert(::boost::hana::value2<decltype(copy)>(), # expr);      \
                 },                                                          \
                 [=](auto _) {                                               \
                     auto copy = _(tmpvar);                                  \

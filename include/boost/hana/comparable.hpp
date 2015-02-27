@@ -184,7 +184,7 @@ namespace boost { namespace hana {
     >> {
         template <typename X, typename Y>
         static constexpr auto apply(X x, Y y) {
-            constexpr auto equal = hana::equal(hana::value(x), hana::value(y));
+            constexpr auto equal = hana::equal(hana::value2<decltype(x)>(), hana::value2<decltype(y)>());
             constexpr bool truth_value = hana::if_(equal, true, false);
             return _bool<truth_value>{};
         }

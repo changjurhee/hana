@@ -174,7 +174,7 @@ namespace boost { namespace hana {
         template <typename I, char ...s>
         static constexpr auto apply(I index, _string<s...> const&) {
             constexpr char characters[] = {s...};
-            constexpr auto i = hana::value(index);
+            constexpr auto i = hana::value2<decltype(index)>();
             return _char<characters[i]>{};
         }
     };
@@ -205,7 +205,7 @@ namespace boost { namespace hana {
         template <char ...s, typename Char>
         static constexpr auto elem_helper(_string<s...>, Char c, _bool<true>) {
             constexpr char c_str[] = {s..., '\0'};
-            return _bool<str_elem(c_str, hana::value(c))>{};
+            return _bool<str_elem(c_str, hana::value2<decltype(c)>())>{};
         }
 
         template <typename S, typename Char>

@@ -66,7 +66,7 @@ namespace boost { namespace hana {
                                       typename datatype<To>::type>::type;
             auto cfrom = hana::to<C>(from);
             auto cto = hana::to<C>(to);
-            return _range<C, hana::value(cfrom), hana::value(cto)>{};
+            return _range<C, hana::value2<decltype(cfrom)>(), hana::value2<decltype(cto)>()>{};
         }
     };
 
@@ -216,7 +216,7 @@ namespace boost { namespace hana {
     struct lookup_impl<Range> {
         template <typename U, typename N>
         static constexpr auto lookup_helper(N n_, decltype(true_)) {
-            constexpr auto n = hana::value(n_);
+            constexpr auto n = hana::value2<decltype(n_)>();
             return hana::just(hana::to<U>(integral_constant<decltype(n), n>));
         }
 
@@ -226,7 +226,7 @@ namespace boost { namespace hana {
 
         template <typename R, typename N>
         static constexpr auto apply(R, N n_) {
-            constexpr auto n = hana::value(n_);
+            constexpr auto n = hana::value2<decltype(n_)>();
             return lookup_helper<typename R::underlying>(
                                     n_, bool_<(n >= R::from && n < R::to)>);
         }
@@ -236,7 +236,7 @@ namespace boost { namespace hana {
     struct elem_impl<Range> {
         template <typename R, typename N>
         static constexpr auto apply(R, N n_) {
-            constexpr auto n = hana::value(n_);
+            constexpr auto n = hana::value2<decltype(n_)>();
             return bool_<(n >= R::from && n < R::to)>;
         }
     };
@@ -275,7 +275,7 @@ namespace boost { namespace hana {
         template <typename N, typename R>
         static constexpr auto apply(N n_, R r) {
             using U = typename R::underlying;
-            constexpr auto n = hana::value(n_);
+            constexpr auto n = hana::value2<decltype(n_)>();
             constexpr auto from = R::from;
             return to<U>(_integral_constant<decltype(from + n), from + n>{});
         }
@@ -295,7 +295,7 @@ namespace boost { namespace hana {
     struct drop_impl<Range> {
         template <typename N, typename R>
         static constexpr auto apply(N n_, R) {
-            constexpr auto n = hana::value(n_);
+            constexpr auto n = hana::value2<decltype(n_)>();
             using U = typename R::underlying;
             return _range<U,
                 (R::to < R::from + n ? R::to : R::from + n),

@@ -196,16 +196,28 @@ namespace boost { namespace hana {
 
     template <typename It, bool condition>
     struct drop_while_impl<It, when<condition>> : default_ {
+        struct recursive {
+            template <typename Xs, typename Pred, typename Id>
+            constexpr decltype(auto) operator()(Xs xs, Pred pred, Id _) const {
+                return apply(hana::tail(xs), pred);
+            }
+        };
+
+        struct first_if {
+            template <typename Xs, typename Pred, typename Id>
+            constexpr decltype(auto) operator()(Xs xs, Pred pred, Id _) const {
+                return hana::eval_if(pred(hana::head(xs)),
+                    hana::partial(recursive{}, xs, pred),
+                    hana::always(xs)
+                );
+            }
+        };
+
         template <typename Xs, typename Pred>
-        static constexpr auto apply(Xs xs, Pred pred) {
+        static constexpr decltype(auto) apply(Xs xs, Pred pred) {
             return hana::eval_if(hana::is_empty(xs),
                 hana::always(xs),
-                [=](auto _) {
-                    return hana::eval_if(pred(_(head)(xs)),
-                        [=](auto _) { return apply(_(tail)(xs), pred); },
-                        [=](auto) { return xs; }
-                    );
-                }
+                hana::partial(first_if{}, xs, pred)
             );
         }
     };

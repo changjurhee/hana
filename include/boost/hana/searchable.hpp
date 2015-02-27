@@ -233,7 +233,7 @@ namespace boost { namespace hana {
                     detail::std::false_type)
         {
             auto cond = pred(detail::std::forward<Xs>(xs)[i + 1]);
-            constexpr bool truth_value = hana::if_(hana::value(cond), true, false);
+            constexpr bool truth_value = hana::if_(hana::value2<decltype(cond)>(), true, false);
             return find_helper(
                 detail::std::forward<Xs>(xs),
                 detail::std::forward<Pred>(pred),
@@ -261,7 +261,7 @@ namespace boost { namespace hana {
         template <typename Xs, typename Pred>
         static constexpr decltype(auto) apply(Xs&& xs, Pred&& pred) {
             auto cond = pred(detail::std::forward<Xs>(xs)[0]);
-            constexpr bool truth_value = hana::if_(hana::value(cond), true, false);
+            constexpr bool truth_value = hana::if_(hana::value2<decltype(cond)>(), true, false);
             return find_helper(
                 detail::std::forward<Xs>(xs),
                 detail::std::forward<Pred>(pred),
