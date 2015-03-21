@@ -28,6 +28,15 @@ struct move_only {
     move_only(move_only const&) = delete;
 };
 
+template <typename F, typename ...Args>
+constexpr auto valid_call(F const& f, Args const& ...args)
+    -> decltype((void)f(args...), true)
+{ return true; }
+
+template <typename ...T>
+constexpr bool valid_call(T const&..., ...)
+{ return false; }
+
 
 int main() {
     test::_injection<0> f{};
@@ -607,6 +616,12 @@ int main() {
             partial(f, ct_eq<1>{}, ct_eq<2>{}, ct_eq<3>{})(),
             f(ct_eq<1>{}, ct_eq<2>{}, ct_eq<3>{})
         ));
+
+        // make sure partial is SFINAE-friendly
+        auto f = [](auto x, auto y) { };
+        auto g = partial(f, 1);
+        static_assert(!valid_call(g), "");
+        static_assert(!valid_call(g, 2, 3), "");
     }
 
     // placeholder (tested separately)

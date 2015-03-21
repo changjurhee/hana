@@ -53,19 +53,27 @@ namespace boost { namespace hana {
         detail::closure_impl<X...> x;
 
         template <typename ...Y>
-        constexpr decltype(auto) operator()(Y&& ...y) const& {
+        constexpr auto operator()(Y&& ...y) const& -> decltype(
+            f(static_cast<X const&>(x).get..., static_cast<Y&&>(y)...)
+        ) {
             return f(static_cast<X const&>(x).get..., static_cast<Y&&>(y)...);
         }
 
 #ifndef BOOST_HANA_CONFIG_CONSTEXPR_MEMBER_FUNCTION_IS_CONST
         template <typename ...Y>
-        constexpr decltype(auto) operator()(Y&& ...y) & {
+        constexpr auto operator()(Y&& ...y) & -> decltype(
+            f(static_cast<X&>(x).get..., static_cast<Y&&>(y)...)
+        ) {
             return f(static_cast<X&>(x).get..., static_cast<Y&&>(y)...);
         }
 #endif
 
         template <typename ...Y>
-        constexpr decltype(auto) operator()(Y&& ...y) && {
+        constexpr auto operator()(Y&& ...y) && -> decltype(
+            detail::std::move(f)(
+                static_cast<X&&>(x).get..., static_cast<Y&&>(y)...
+            )
+        ) {
             return detail::std::move(f)(
                 static_cast<X&&>(x).get..., static_cast<Y&&>(y)...
             );
