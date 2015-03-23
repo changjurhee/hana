@@ -166,13 +166,13 @@ namespace boost { namespace hana {
     template <typename It, bool condition>
     struct drop_at_most_impl<It, when<condition>> : default_ {
         template <typename N, typename Xs>
-        static constexpr auto apply(N n, Xs xs) {
-            using I = typename datatype<N>::type;
-            return hana::eval_if(
-                hana::or_(hana::equal(n, zero<I>()), hana::is_empty(xs)),
-                hana::always(xs),
-                hana::lazy(hana::lockstep(drop.at_most)(pred, tail))(n, xs)
-            );
+        static constexpr auto apply(N const&, Xs&& xs) {
+            constexpr detail::std::size_t n = hana::value<N>();
+            constexpr detail::std::size_t len = hana::value<
+                decltype(hana::length(xs))
+            >();
+            constexpr detail::std::size_t drop_size = n < len ? n : len;
+            return hana::iterate<drop_size>(tail)(static_cast<Xs&&>(xs));
         }
     };
 
@@ -205,24 +205,27 @@ namespace boost { namespace hana {
     // drop_while
     //////////////////////////////////////////////////////////////////////////
     namespace iterable_detail {
+        template <detail::std::size_t k, detail::std::size_t Len>
         struct drop_while_helper {
-            struct next {
-                template <typename Xs, typename Pred>
-                constexpr decltype(auto) operator()(Xs&& xs, Pred&& pred) const {
-                    return hana::drop_while(
-                        hana::tail(static_cast<Xs&&>(xs)),
-                        static_cast<Pred&&>(pred)
-                    );
-                }
-            };
+            template <typename Xs, typename Pred>
+            static constexpr Xs apply(decltype(false_), Xs&& xs, Pred&&)
+            { return static_cast<Xs&&>(xs); }
 
             template <typename Xs, typename Pred>
-            constexpr decltype(auto) operator()(Xs&& xs, Pred&& pred) const {
-                return hana::eval_if(pred(hana::head(xs)),
-                    hana::lazy(next{})(xs, pred),
-                    hana::lazy(xs)
-                );
+            static constexpr decltype(auto)
+            apply(decltype(true_), Xs&& xs, Pred&& pred) {
+                auto cond = hana::if_(pred(at_c<k>(xs)), true_, false_);
+                return drop_while_helper<k + 1, Len>::apply(cond,
+                                hana::tail(static_cast<Xs&&>(xs)),
+                                static_cast<Pred&&>(pred));
             }
+        };
+
+        template <detail::std::size_t Len>
+        struct drop_while_helper<Len, Len> {
+            template <typename Cond, typename Xs, typename Pred>
+            static constexpr Xs apply(Cond cond, Xs&& xs, Pred&&)
+            { return static_cast<Xs&&>(xs); }
         };
     }
 
@@ -232,12 +235,14 @@ namespace boost { namespace hana {
     template <typename It, bool condition>
     struct drop_while_impl<It, when<condition>> : default_ {
         template <typename Xs, typename Pred>
-        static constexpr auto apply(Xs&& xs, Pred&& pred) {
-            return hana::eval_if(hana::is_empty(xs),
-                hana::lazy(xs),
-                hana::lazy(iterable_detail::drop_while_helper{})(
-                                            xs, static_cast<Pred&&>(pred))
-            );
+        static constexpr decltype(auto) apply(Xs&& xs, Pred&& pred) {
+            constexpr detail::std::size_t len = hana::value<
+                decltype(hana::length(xs))
+            >();
+            return iterable_detail::drop_while_helper<0, len>::apply(
+                    true_,
+                    static_cast<Xs&&>(xs),
+                    static_cast<Pred&&>(pred));
         }
     };
 
