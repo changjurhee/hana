@@ -291,7 +291,7 @@ namespace boost { namespace hana {
         };
         template <typename Cond>
         static constexpr auto apply(Cond const&)
-        { return to<C>(_constant<Cond>{}); }
+        { return hana::_to<C>{}(_constant<Cond>{}); }
     };
 
     template <typename C>

@@ -94,7 +94,7 @@ namespace boost { namespace hana {
         };
         template <typename X>
         static constexpr decltype(auto) apply(X const&)
-        { return to<C>(_constant<X>{}); }
+        { return hana::_to<C>{}(_constant<X>{}); }
     };
 
     template <typename C>
@@ -110,7 +110,7 @@ namespace boost { namespace hana {
         };
         template <typename X>
         static constexpr decltype(auto) apply(X const&)
-        { return to<C>(_constant<X>{}); }
+        { return hana::_to<C>{}(_constant<X>{}); }
     };
 }} // end namespace boost::hana
 

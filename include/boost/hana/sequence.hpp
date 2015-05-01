@@ -44,7 +44,7 @@ namespace boost { namespace hana {
         struct pairwise {
             template <typename F, typename G, typename P>
             constexpr decltype(auto) operator()(F&& f, G&& g, P&& p) const {
-                return hana::make<Pair>(
+                return hana::make_pair(
                     static_cast<F&&>(f)(hana::first(static_cast<P&&>(p))),
                     static_cast<G&&>(g)(hana::second(static_cast<P&&>(p)))
                 );
@@ -58,7 +58,7 @@ namespace boost { namespace hana {
                 return hana::second(
                     hana::while_(
                         hana::compose(static_cast<Pred&&>(pred), first),
-                        hana::make<Pair>(static_cast<Init&&>(init),
+                        hana::make_pair(static_cast<Init&&>(init),
                                          static_cast<State&&>(state)),
                         hana::partial(pairwise{},
                             static_cast<Incr&&>(incr),
@@ -84,7 +84,7 @@ namespace boost { namespace hana {
         struct pairwise2 {
             template <typename F, typename G, typename P>
             constexpr decltype(auto) operator()(F&& f, G&& g, P&& p) const {
-                return hana::make<Pair>(
+                return hana::make_pair(
                     static_cast<F&&>(f)(hana::first(p)),
                     static_cast<G&&>(g)(
                         hana::first(p),
@@ -100,7 +100,7 @@ namespace boost { namespace hana {
                 return hana::second(
                     hana::while_(
                         hana::compose(static_cast<Pred&&>(pred), first),
-                        hana::make<Pair>(static_cast<Init&&>(init),
+                        hana::make_pair(static_cast<Init&&>(init),
                                          static_cast<State&&>(state)),
                         hana::partial(pairwise2{},
                             static_cast<Incr&&>(incr),
@@ -161,7 +161,7 @@ namespace boost { namespace hana {
                                   static_cast<decltype(x)&&>(x)));
                 decltype(auto) spn = hana::first(static_cast<decltype(tmp)&&>(tmp));
                 decltype(auto) rest = hana::second(static_cast<decltype(tmp)&&>(tmp));
-                return hana::make<Pair>(
+                return hana::make_pair(
                     hana::append(static_cast<Grouped&&>(grouped),
                                  static_cast<decltype(spn)&&>(spn)),
                     static_cast<decltype(rest)&&>(rest)
@@ -175,7 +175,7 @@ namespace boost { namespace hana {
         template <typename Xs, typename Pred>
         static constexpr decltype(auto) apply(Xs&& xs, Pred&& pred) {
             return hana::first(hana::until(hana::compose(is_empty, second),
-                hana::make<Pair>(empty<S>(), static_cast<Xs&&>(xs)),
+                hana::make_pair(hana::_empty<S>{}(), static_cast<Xs&&>(xs)),
                 hana::fuse(hana::partial(sequence_detail::group_by_loop{},
                                          static_cast<Pred&&>(pred)))
             ));
@@ -234,7 +234,7 @@ namespace boost { namespace hana {
                 static_cast<Xs&&>(xs),
                 hana::compose(not_, is_empty, tail),
                 tail
-            )(sequence_detail::init_helper{})(empty<S>());
+            )(sequence_detail::init_helper{})(hana::_empty<S>{}());
         }
     };
 
@@ -314,7 +314,7 @@ namespace boost { namespace hana {
         static constexpr decltype(auto) apply(Xs&& xs, Pred&& pred) {
             return hana::fold.left(
                 static_cast<Xs&&>(xs),
-                hana::make<Pair>(empty<S>(), empty<S>()),
+                hana::make_pair(_empty<S>{}(), _empty<S>{}()),
                 hana::partial(sequence_detail::partition_helper{},
                               static_cast<Pred&&>(pred))
             );
@@ -365,7 +365,7 @@ namespace boost { namespace hana {
         template <typename Xs>
         static constexpr auto apply(Xs&& xs) {
             return hana::eval_if(hana::is_empty(xs),
-                hana::lazy(lift<S>)(empty<S>()),
+                hana::lazy(lift<S>)(_empty<S>{}()),
                 hana::lazy(permutations_helper{})(xs)
             );
         }
@@ -419,7 +419,7 @@ namespace boost { namespace hana {
     struct reverse_impl<S, when<condition>> : default_ {
         template <typename Xs>
         static constexpr decltype(auto) apply(Xs&& xs) {
-            return hana::fold.left(static_cast<Xs&&>(xs), empty<S>(),
+            return hana::fold.left(static_cast<Xs&&>(xs), _empty<S>{}(),
                                                         hana::flip(prepend));
         }
     };
@@ -476,7 +476,7 @@ namespace boost { namespace hana {
         static constexpr auto apply(Xs&& xs, F&& f) {
             decltype(auto) done = hana::is_empty(xs);
             return hana::eval_if(static_cast<decltype(done)&&>(done),
-                hana::lazy(empty<S>()),
+                hana::lazy(_empty<S>{}()),
                 hana::lazy(sequence_detail::scan_left_nostate_helper{})(
                     static_cast<Xs&&>(xs), static_cast<F&&>(f)
                 )
@@ -543,7 +543,7 @@ namespace boost { namespace hana {
         static constexpr auto apply(Xs&& xs, F&& f) {
             auto done = hana::is_empty(xs);
             return hana::eval_if(done,
-                hana::lazy(empty<S>()),
+                hana::lazy(_empty<S>{}()),
                 hana::lazy(scanr1_helper1{})(static_cast<Xs&&>(xs),
                                              static_cast<F&&>(f))
             );
@@ -671,7 +671,7 @@ namespace boost { namespace hana {
             constexpr decltype(auto) operator()(Xs&& xs, Pred&& pred) const {
                 return hana::eval_if(pred(hana::head(xs)),
                     hana::lazy(span_helper2{})(xs, pred),
-                    hana::lazy(make_pair)(empty<S>(), xs)
+                    hana::lazy(make_pair)(_empty<S>{}(), xs)
                 );
             }
         };
@@ -679,7 +679,7 @@ namespace boost { namespace hana {
         template <typename Xs, typename Pred>
         static constexpr auto apply(Xs xs, Pred pred) {
             return hana::eval_if(hana::is_empty(xs),
-                hana::lazy(make_pair)(empty<S>(), empty<S>()),
+                hana::lazy(make_pair)(_empty<S>{}(), _empty<S>{}()),
                 hana::lazy(span_helper1{})(xs, pred)
             );
         }
@@ -709,13 +709,13 @@ namespace boost { namespace hana {
         static constexpr decltype(auto) apply(Xs&& xs, Indices const& indices) {
             return subsequence_impl::subsequence_helper(
                 static_cast<Xs&&>(xs),
-                hana::to<Tuple>(indices)
+                hana::_to<Tuple>{}(indices)
             );
         }
 
         template <typename Xs, typename T, T ...v>
         static constexpr decltype(auto) apply(Xs&& xs, _tuple_c<T, v...> const&)
-        { return hana::make<S>(hana::_at_c<v>{}(xs)...); }
+        { return hana::_make<S>{}(hana::_at_c<v>{}(xs)...); }
     };
 
     //////////////////////////////////////////////////////////////////////////
@@ -742,7 +742,7 @@ namespace boost { namespace hana {
         template <typename N, typename Xs>
         static constexpr auto apply(N n, Xs xs) {
             return hana::eval_if(hana::equal(n, size_t<0>),
-                hana::lazy(empty<S>()),
+                hana::lazy(_empty<S>{}()),
                 hana::lazy(sequence_detail::take_helper<take_exactly_impl>{})(n, xs)
             );
         }
@@ -760,7 +760,7 @@ namespace boost { namespace hana {
         static constexpr decltype(auto) apply(N n, Xs xs) {
             return hana::eval_if(
                 hana::or_(hana::equal(n, size_t<0>), hana::is_empty(xs)),
-                hana::lazy(empty<S>()),
+                hana::lazy(_empty<S>{}()),
                 hana::lazy(sequence_detail::take_helper<take_at_most_impl>{})(n, xs)
             );
         }
@@ -851,7 +851,7 @@ namespace boost { namespace hana {
                 hana::partial(sequence_detail::take_while_predicate{},
                               static_cast<Pred&&>(pred)),
                 tail
-            )(sequence_detail::take_while_helper{})(empty<S>());
+            )(sequence_detail::take_while_helper{})(_empty<S>{}());
         }
     };
 
@@ -879,7 +879,7 @@ namespace boost { namespace hana {
         template <typename Init, typename F>
         static constexpr decltype(auto) apply(Init&& init, F&& f) {
             decltype(auto) elt = f(static_cast<Init&&>(init));
-            return hana::maybe(empty<S>(),
+            return hana::maybe(_empty<S>{}(),
                 hana::partial(unfold_left_helper{}, static_cast<F&&>(f)),
                 static_cast<decltype(elt)&&>(elt)
             );
@@ -910,7 +910,7 @@ namespace boost { namespace hana {
         template <typename Init, typename F>
         static constexpr decltype(auto) apply(Init&& init, F&& f) {
             decltype(auto) elt = f(static_cast<Init&&>(init));
-            return hana::maybe(empty<S>(),
+            return hana::maybe(_empty<S>{}(),
                 hana::partial(unfold_right_helper{}, static_cast<F&&>(f)),
                 static_cast<decltype(elt)&&>(elt)
             );
@@ -1040,7 +1040,7 @@ namespace boost { namespace hana {
         static constexpr decltype(auto) apply(F&& f, Xs&& xs, Ys&& ...ys) {
             auto done = hana::is_empty(xs);
             return hana::eval_if(done,
-                hana::lazy(empty<S>()),
+                hana::lazy(_empty<S>{}()),
                 hana::lazy(sequence_detail::zip_unsafe_with_helper{})(
                     static_cast<F&&>(f),
                     static_cast<Xs&&>(xs),
@@ -1089,7 +1089,7 @@ namespace boost { namespace hana {
         template <typename ...X>
         static constexpr decltype(auto) apply(X&& ...x) {
             return detail::variadic::foldr1(
-                prepend, static_cast<X&&>(x)..., empty<S>()
+                prepend, static_cast<X&&>(x)..., _empty<S>{}()
             );
         }
     };
@@ -1205,7 +1205,7 @@ namespace boost { namespace hana {
     struct Sequence::transform_impl {
         template <typename Xs, typename F>
         static constexpr decltype(auto) apply(Xs&& xs, F&& f) {
-            return hana::fold.right(static_cast<Xs&&>(xs), empty<S>(),
+            return hana::fold.right(static_cast<Xs&&>(xs), _empty<S>{}(),
                         hana::compose(prepend, static_cast<F&&>(f)));
         }
     };
@@ -1222,7 +1222,7 @@ namespace boost { namespace hana {
     struct Sequence::lift_impl {
         template <typename X>
         static constexpr decltype(auto) apply(X&& x)
-        { return hana::prepend(static_cast<X&&>(x), empty<S>()); }
+        { return hana::prepend(static_cast<X&&>(x), _empty<S>{}()); }
     };
 
     template <typename S>
@@ -1242,7 +1242,7 @@ namespace boost { namespace hana {
     struct Sequence::flatten_impl {
         template <typename Xs>
         static constexpr decltype(auto) apply(Xs&& xs)
-        { return hana::fold.right(static_cast<Xs&&>(xs), empty<S>(), concat); }
+        { return hana::fold.right(static_cast<Xs&&>(xs), _empty<S>{}(), concat); }
     };
 
     template <typename S>
@@ -1327,7 +1327,7 @@ namespace boost { namespace hana {
         static constexpr decltype(auto) apply(Xs&& xs, F&& f) {
             return hana::fold.right(
                 static_cast<Xs&&>(xs),
-                hana::lift<A>(empty<S>()),
+                hana::lift<A>(_empty<S>{}()),
                 hana::partial(sequence_detail::traverse_helper{},
                               static_cast<F&&>(f)));
         }

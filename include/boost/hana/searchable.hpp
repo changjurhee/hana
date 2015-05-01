@@ -227,8 +227,8 @@ namespace boost { namespace hana {
         using C = typename common<S1, S2>::type;
         template <typename Xs, typename Ys>
         static constexpr decltype(auto) apply(Xs&& xs, Ys&& ys) {
-            return hana::is_subset(hana::to<C>(static_cast<Xs&&>(xs)),
-                                   hana::to<C>(static_cast<Ys&&>(ys)));
+            return hana::is_subset(hana::_to<C>{}(static_cast<Xs&&>(xs)),
+                                   hana::_to<C>{}(static_cast<Ys&&>(ys)));
         }
     };
 

@@ -71,7 +71,7 @@ namespace boost { namespace hana {
     >> : embedding<is_embedded<typename From::value_type, To>{}()> {
         template <typename X>
         static constexpr decltype(auto) apply(X const&)
-        { return to<To>(hana::value<X>()); }
+        { return hana::_to<To>{}(hana::value<X>()); }
     };
 
     //////////////////////////////////////////////////////////////////////////

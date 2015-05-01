@@ -107,7 +107,7 @@ namespace boost { namespace hana {
                 return hana::unpack(
                     hana::append(static_cast<M&&>(map).storage,
                                  static_cast<P&&>(pair)),
-                    hana::make<Map>
+                    hana::make_map
                 );
             }
         };
@@ -180,7 +180,7 @@ namespace boost { namespace hana {
         template <typename Xs>
         static constexpr decltype(auto) apply(Xs&& xs) {
             return hana::fold.left(
-                static_cast<Xs&&>(xs), hana::make<Map>(), hana::insert
+                static_cast<Xs&&>(xs), hana::make_map(), hana::insert
             );
         }
     };

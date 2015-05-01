@@ -33,7 +33,7 @@ namespace boost { namespace hana {
         struct _seq {
             template <typename ...Xs>
             constexpr decltype(auto) operator()(Xs ...xs) const {
-                auto storage = make<Tuple>(xs...);
+                auto storage = make_tuple(xs...);
                 return seq_type<decltype(storage)>(storage);
             }
         };

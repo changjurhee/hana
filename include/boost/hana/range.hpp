@@ -63,8 +63,8 @@ namespace boost { namespace hana {
         static constexpr auto apply(From const& from, To const& to) {
             using C = typename common<typename datatype<From>::type,
                                       typename datatype<To>::type>::type;
-            auto cfrom = hana::to<C>(from);
-            auto cto = hana::to<C>(to);
+            auto cfrom = hana::_to<C>{}(from);
+            auto cto = hana::_to<C>{}(to);
             return _range<C, hana::value(cfrom), hana::value(cto)>{};
         }
     };
@@ -103,7 +103,7 @@ namespace boost { namespace hana {
         unpack_helper(R const&, F&& f, detail::std::integer_sequence<T, v...>) {
             using U = typename R::underlying;
             return static_cast<F&&>(f)(
-                to<U>(_integral_constant<T, R::from + v>{})...
+                hana::_to<U>{}(_integral_constant<T, R::from + v>{})...
             );
         }
 
@@ -127,7 +127,7 @@ namespace boost { namespace hana {
         template <typename R>
         static constexpr auto apply(R const&) {
             using U = typename R::underlying;
-            return hana::to<U>(_integral_constant<decltype(R::from), R::from>{});
+            return hana::_to<U>{}(_integral_constant<decltype(R::from), R::from>{});
         }
     };
 
@@ -136,7 +136,7 @@ namespace boost { namespace hana {
         template <typename R>
         static constexpr auto apply(R const&) {
             using U = typename R::underlying;
-            return hana::to<U>(_integral_constant<decltype(R::to-1), R::to-1>{});
+            return hana::_to<U>{}(_integral_constant<decltype(R::to-1), R::to-1>{});
         }
     };
 
@@ -171,7 +171,7 @@ namespace boost { namespace hana {
             constexpr auto from = R::from;
             constexpr auto to = R::to;
             constexpr auto s = from == to ? 0 : sum_helper(from, to-1);
-            return hana::to<U>(_integral_constant<decltype(s), s>{});
+            return hana::_to<U>{}(_integral_constant<decltype(s), s>{});
         }
     };
 
@@ -194,7 +194,7 @@ namespace boost { namespace hana {
         static constexpr auto apply(R const&) {
             using U = typename R::underlying;
             constexpr auto p = product_helper(R::from, R::to);
-            return hana::to<U>(_integral_constant<decltype(p), p>{});
+            return hana::_to<U>{}(_integral_constant<decltype(p), p>{});
         }
     };
 
@@ -216,7 +216,7 @@ namespace boost { namespace hana {
         template <typename U, typename N>
         static constexpr auto find_helper(N const&, decltype(true_)) {
             constexpr auto n = hana::value<N>();
-            return hana::just(hana::to<U>(integral_constant<decltype(n), n>));
+            return hana::just(hana::_to<U>{}(integral_constant<decltype(n), n>));
         }
 
         template <typename U, typename N>
@@ -249,7 +249,7 @@ namespace boost { namespace hana {
         static constexpr auto apply(R const&) {
             using U = typename R::underlying;
             constexpr auto from = R::from;
-            return hana::to<U>(_integral_constant<decltype(from), from>{});
+            return hana::_to<U>{}(_integral_constant<decltype(from), from>{});
         }
     };
 
@@ -276,7 +276,7 @@ namespace boost { namespace hana {
             using U = typename R::underlying;
             constexpr auto n = hana::value<N>();
             constexpr auto from = R::from;
-            return to<U>(_integral_constant<decltype(from + n), from + n>{});
+            return hana::_to<U>{}(_integral_constant<decltype(from + n), from + n>{});
         }
     };
 
@@ -286,7 +286,7 @@ namespace boost { namespace hana {
         static constexpr auto apply(R const&) {
             using U = typename R::underlying;
             constexpr auto to = R::to;
-            return hana::to<U>(_integral_constant<decltype(to-1), to-1>{});
+            return hana::_to<U>{}(_integral_constant<decltype(to-1), to-1>{});
         }
     };
 

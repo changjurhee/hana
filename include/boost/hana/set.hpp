@@ -124,7 +124,7 @@ namespace boost { namespace hana {
         template <typename Xs>
         static constexpr decltype(auto) apply(Xs&& xs) {
             return hana::fold.left(static_cast<Xs&&>(xs),
-                                   hana::make<Set>(),
+                                   hana::make_set(),
                                    hana::insert);
         }
     };
@@ -140,7 +140,7 @@ namespace boost { namespace hana {
                 return hana::unpack(
                     hana::append(static_cast<S&&>(s).storage,
                                  static_cast<X&&>(x)),
-                    hana::make<Set>
+                    hana::make_set
                 );
             }
         };

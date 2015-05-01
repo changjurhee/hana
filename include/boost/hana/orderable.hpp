@@ -84,8 +84,8 @@ namespace boost { namespace hana {
         using C = typename common<T, U>::type;
         template <typename X, typename Y>
         static constexpr decltype(auto) apply(X&& x, Y&& y) {
-            return hana::less(hana::to<C>(static_cast<X&&>(x)),
-                              hana::to<C>(static_cast<Y&&>(y)));
+            return hana::less(hana::_to<C>{}(static_cast<X&&>(x)),
+                              hana::_to<C>{}(static_cast<Y&&>(y)));
         }
     };
 
@@ -118,8 +118,8 @@ namespace boost { namespace hana {
         using C = typename common<T, U>::type;
         template <typename X, typename Y>
         static constexpr decltype(auto) apply(X&& x, Y&& y) {
-            return hana::less_equal(hana::to<C>(static_cast<X&&>(x)),
-                                    hana::to<C>(static_cast<Y&&>(y)));
+            return hana::less_equal(hana::_to<C>{}(static_cast<X&&>(x)),
+                                    hana::_to<C>{}(static_cast<Y&&>(y)));
         }
     };
 
@@ -152,8 +152,8 @@ namespace boost { namespace hana {
         using C = typename common<T, U>::type;
         template <typename X, typename Y>
         static constexpr decltype(auto) apply(X&& x, Y&& y) {
-            return hana::greater(hana::to<C>(static_cast<X&&>(x)),
-                                 hana::to<C>(static_cast<Y&&>(y)));
+            return hana::greater(hana::_to<C>{}(static_cast<X&&>(x)),
+                                 hana::_to<C>{}(static_cast<Y&&>(y)));
         }
     };
 
@@ -186,8 +186,8 @@ namespace boost { namespace hana {
         using C = typename common<T, U>::type;
         template <typename X, typename Y>
         static constexpr decltype(auto) apply(X&& x, Y&& y) {
-            return hana::greater_equal(hana::to<C>(static_cast<X&&>(x)),
-                                       hana::to<C>(static_cast<Y&&>(y)));
+            return hana::greater_equal(hana::_to<C>{}(static_cast<X&&>(x)),
+                                       hana::_to<C>{}(static_cast<Y&&>(y)));
         }
     };
 

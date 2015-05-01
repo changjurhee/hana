@@ -47,14 +47,15 @@ namespace boost { namespace hana {
 
     template <typename T, typename C>
     struct to_impl<detail::CanonicalConstant<T>, C, when<
-        _models<Constant, C>{} && is_convertible<typename C::value_type, T>{}
+        _models<Constant, C>{}() &&
+        is_convertible<typename C::value_type, T>{}()
     >>
-        : embedding<is_embedded<typename C::value_type, T>{}>
+        : embedding<is_embedded<typename C::value_type, T>{}()>
     {
         template <typename X>
         struct _constant {
             static constexpr decltype(auto) get()
-            { return to<T>(boost::hana::value<X>()); }
+            { return boost::hana::_to<T>{}(boost::hana::value<X>()); }
             struct hana { using datatype = detail::CanonicalConstant<T>; };
         };
         template <typename X>

@@ -81,8 +81,8 @@ namespace boost { namespace hana {
         using C = typename common<T, U>::type;
         template <typename X, typename Y>
         static constexpr decltype(auto) apply(X&& x, Y&& y) {
-            return hana::equal(hana::to<C>(static_cast<X&&>(x)),
-                               hana::to<C>(static_cast<Y&&>(y)));
+            return hana::equal(hana::_to<C>{}(static_cast<X&&>(x)),
+                               hana::_to<C>{}(static_cast<Y&&>(y)));
         }
     };
 
@@ -115,8 +115,8 @@ namespace boost { namespace hana {
         using C = typename common<T, U>::type;
         template <typename X, typename Y>
         static constexpr decltype(auto) apply(X&& x, Y&& y) {
-            return hana::not_equal(hana::to<C>(static_cast<X&&>(x)),
-                                   hana::to<C>(static_cast<Y&&>(y)));
+            return hana::not_equal(hana::_to<C>{}(static_cast<X&&>(x)),
+                                   hana::_to<C>{}(static_cast<Y&&>(y)));
         }
     };
 
@@ -176,7 +176,7 @@ namespace boost { namespace hana {
         static constexpr auto apply(X const&, Y const&) {
             constexpr auto equal = hana::equal(hana::value<X>(), hana::value<Y>());
             constexpr bool truth_value = hana::if_(equal, true, false);
-            return _bool<truth_value>{};
+            return bool_<truth_value>;
         }
     };
 }} // end namespace boost::hana

@@ -61,8 +61,8 @@ namespace boost { namespace hana {
         using C = typename common<T, U>::type;
         template <typename X, typename Y>
         static constexpr decltype(auto) apply(X&& x, Y&& y) {
-            return hana::mult(hana::to<C>(static_cast<X&&>(x)),
-                              hana::to<C>(static_cast<Y&&>(y)));
+            return hana::mult(hana::_to<C>{}(static_cast<X&&>(x)),
+                              hana::_to<C>{}(static_cast<Y&&>(y)));
         }
     };
 
@@ -90,7 +90,7 @@ namespace boost { namespace hana {
             constexpr detail::std::size_t n = hana::value<N>();
             return hana::iterate<n>(
                 hana::partial(hana::mult, static_cast<X&&>(x)),
-                hana::one<R>()
+                hana::_one<R>{}()
             );
         }
     };
@@ -143,7 +143,7 @@ namespace boost { namespace hana {
         };
         template <typename X, typename Y>
         static constexpr decltype(auto) apply(X const&, Y const&)
-        { return hana::to<C>(_constant<X, Y>{}); }
+        { return hana::_to<C>{}(_constant<X, Y>{}); }
     };
 
     template <typename C>
@@ -154,13 +154,13 @@ namespace boost { namespace hana {
         using T = typename C::value_type;
         struct _constant {
             static constexpr decltype(auto) get()
-            { return boost::hana::one<T>(); }
+            { return boost::hana::_one<T>{}(); }
 
             using hana = _constant;
             using datatype = detail::CanonicalConstant<T>;
         };
         static constexpr decltype(auto) apply()
-        { return hana::to<C>(_constant{}); }
+        { return hana::_to<C>{}(_constant{}); }
     };
 
 }} // end namespace boost::hana

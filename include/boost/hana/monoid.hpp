@@ -59,8 +59,8 @@ namespace boost { namespace hana {
         using C = typename common<T, U>::type;
         template <typename X, typename Y>
         static constexpr decltype(auto) apply(X&& x, Y&& y) {
-            return hana::plus(hana::to<C>(static_cast<X&&>(x)),
-                              hana::to<C>(static_cast<Y&&>(y)));
+            return hana::plus(hana::_to<C>{}(static_cast<X&&>(x)),
+                              hana::_to<C>{}(static_cast<Y&&>(y)));
         }
     };
 
@@ -129,7 +129,7 @@ namespace boost { namespace hana {
         };
         template <typename X, typename Y>
         static constexpr decltype(auto) apply(X const&, Y const&)
-        { return hana::to<C>(_constant<X, Y>{}); }
+        { return hana::_to<C>{}(_constant<X, Y>{}); }
     };
 
     template <typename C>
@@ -146,7 +146,7 @@ namespace boost { namespace hana {
             using datatype = detail::CanonicalConstant<T>;
         };
         static constexpr decltype(auto) apply()
-        { return hana::to<C>(_constant{}); }
+        { return hana::_to<C>{}(_constant{}); }
     };
 }} // end namespace boost::hana
 
