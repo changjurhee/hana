@@ -85,14 +85,18 @@ namespace boost { namespace hana {
         //! for some method `m`, then `has_operator<T, decltype(m)>` will
         //! be true.
         //!
-        //! However, while explicit specialization of `operators::of` is
-        //! possible, another way of customizing this trait is provided.
-        //! If a data type `T` (or a concept, see below) provides a nested
-        //! `hana::operators` type, then `operators::of<T>` will inherit
-        //! this instead. This makes it possible to enable operators for
-        //! a data type without ever leaving the comfort of your namespace.
+        //! Additionally, if the data type `T` wants to use all the operators
+        //! provided by some concept `C`, having `operators::of<T>` inherit
+        //! `operators::of<C>` is sufficient.
         //!
-        //! Also, when a concept `Concept` has methods for which equivalent
+        //! While explicit specialization of `operators::of` is possible,
+        //! another way of customizing this trait is provided. If `T` (or a
+        //! concept, see below) provides a nested `hana::operators` type,
+        //! then `operators::of<T>` will inherit this instead. This makes
+        //! it possible to enable operators for a data type or concept
+        //! without ever leaving the comfort of your namespace.
+        //!
+        //! When a concept `Concept` has methods for which equivalent
         //! operators are provided, `operators::of<Concept>` should be
         //! specialized so it inherits from all its methods that possess an
         //! operator equivalent. For example, if `Concept` has methods `m1`,
