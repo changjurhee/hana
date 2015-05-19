@@ -11,6 +11,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_FWD_LOGICAL_HPP
 
 #include <boost/hana/config.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/fwd/core/datatype.hpp>
 #include <boost/hana/fwd/core/models.hpp>
 
@@ -219,7 +220,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _if if_{};
+    namespace {
+        constexpr auto const& if_ = detail::static_constexpr<_if>;
+    }
 #endif
 
     //! Conditionally execute one of two branches based on a condition.
@@ -335,7 +338,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _eval_if eval_if{};
+    namespace {
+        constexpr auto const& eval_if = detail::static_constexpr<_eval_if>;
+    }
 #endif
 
     //! Apply a function to an initial state while some predicate is satisfied.
@@ -403,7 +408,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _while while_{};
+    namespace {
+        constexpr auto const& while_ = detail::static_constexpr<_while>;
+    }
 #endif
 
     //! Apply a function to an initial state until some predicate is satisfied.
@@ -464,7 +471,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _until until{};
+    namespace {
+        constexpr auto const& until = detail::static_constexpr<_until>;
+    }
 #endif
 
     //! Negates a `Logical`.
@@ -496,7 +505,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _not not_{};
+    namespace {
+        constexpr auto const& not_ = detail::static_constexpr<_not>;
+    }
 #endif
 
     //! Return whether all the arguments are true-valued.
@@ -530,7 +541,9 @@ namespace boost { namespace hana {
         constexpr decltype(auto) operator()(X&& x, Y&& ...y) const;
     };
 
-    constexpr _and and_{};
+    namespace {
+        constexpr auto const& and_ = detail::static_constexpr<_and>;
+    }
 #endif
 
     //! Return whether any of the arguments is true-valued.
@@ -564,7 +577,9 @@ namespace boost { namespace hana {
         constexpr decltype(auto) operator()(X&& x, Y&& ...y) const;
     };
 
-    constexpr _or or_{};
+    namespace {
+        constexpr auto const& or_ = detail::static_constexpr<_or>;
+    }
 #endif
 }} // end namespace boost::hana
 

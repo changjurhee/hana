@@ -11,6 +11,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_FUNCTIONAL_ARG_HPP
 
 #include <boost/hana/config.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/detail/std/enable_if.hpp>
 #include <boost/hana/detail/std/size_t.hpp>
 
@@ -132,8 +133,10 @@ namespace boost { namespace hana {
         { return _arg<n - 25>{}(static_cast<Xn&&>(xn)...); }
     };
 
-    template <detail::std::size_t n>
-    constexpr _arg<n> arg{};
+    namespace {
+        template <detail::std::size_t n>
+        constexpr auto const& arg = detail::static_constexpr<_arg<n>>;
+    }
 #endif
 }} // end namespace boost::hana
 

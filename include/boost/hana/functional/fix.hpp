@@ -12,6 +12,7 @@ Distributed under the Boost Software License, Version 1.0.
 
 #include <boost/hana/config.hpp>
 #include <boost/hana/detail/create.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/detail/std/move.hpp>
 
 
@@ -58,7 +59,9 @@ namespace boost { namespace hana {
     template <typename F>
     struct _fix;
 
-    constexpr detail::create<_fix> fix{};
+    namespace {
+        constexpr auto const& fix = detail::static_constexpr<detail::create<_fix>>;
+    }
 
     template <typename F>
     struct _fix {

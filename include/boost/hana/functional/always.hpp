@@ -12,6 +12,7 @@ Distributed under the Boost Software License, Version 1.0.
 
 #include <boost/hana/config.hpp>
 #include <boost/hana/detail/create.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/detail/std/move.hpp>
 
 
@@ -58,7 +59,9 @@ namespace boost { namespace hana {
         { return detail::std::move(val_); }
     };
 
-    constexpr detail::create<_always> always{};
+    namespace {
+        constexpr auto const& always = detail::static_constexpr<detail::create<_always>>;
+    }
 #endif
 }} // end namespace boost::hana
 

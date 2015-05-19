@@ -11,6 +11,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_FWD_RING_HPP
 
 #include <boost/hana/config.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/fwd/core/datatype.hpp>
 #include <boost/hana/fwd/core/default.hpp>
 #include <boost/hana/fwd/core/models.hpp>
@@ -171,7 +172,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _mult mult{};
+    namespace {
+        constexpr auto const& mult = detail::static_constexpr<_mult>;
+    }
 #endif
 
     //! Identity of the `Ring` multiplication.
@@ -205,8 +208,10 @@ namespace boost { namespace hana {
         { return one_impl<R>::apply(); }
     };
 
-    template <typename R>
-    constexpr _one<R> one{};
+    namespace {
+        template <typename R>
+        constexpr auto const& one = detail::static_constexpr<_one<R>>;
+    }
 #endif
 
     //! Elevate a ring element to its `n`th power.
@@ -253,7 +258,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _power power{};
+    namespace {
+        constexpr auto const& power = detail::static_constexpr<_power>;
+    }
 #endif
 }} // end namespace boost::hana
 

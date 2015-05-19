@@ -11,6 +11,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_FWD_PRODUCT_HPP
 
 #include <boost/hana/config.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/fwd/core/datatype.hpp>
 #include <boost/hana/fwd/core/models.hpp>
 
@@ -128,7 +129,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _first first{};
+    namespace {
+        constexpr auto const& first = detail::static_constexpr<_first>;
+    }
 #endif
 
     //! Returns the second element of a pair.
@@ -161,7 +164,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _second second{};
+    namespace {
+        constexpr auto const& second = detail::static_constexpr<_second>;
+    }
 #endif
 }} // end namespace boost::hana
 

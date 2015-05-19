@@ -11,6 +11,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_FWD_FUNCTOR_HPP
 
 #include <boost/hana/config.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/fwd/core/datatype.hpp>
 #include <boost/hana/fwd/core/models.hpp>
 
@@ -170,19 +171,21 @@ namespace boost { namespace hana {
     struct _transform {
         template <typename Xs, typename F>
         constexpr decltype(auto) operator()(Xs&& xs, F&& f) const {
-#ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
-            static_assert(_models<Functor, typename datatype<Xs>::type>{},
-            "hana::transform(xs, f) requires xs to be a Functor");
-#endif
+            using S = typename datatype<Xs>::type;
+            using Transform = transform_impl<S>;
 
-            return transform_impl<typename datatype<Xs>::type>::apply(
-                static_cast<Xs&&>(xs),
-                static_cast<F&&>(f)
-            );
+        #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
+            static_assert(_models<Functor, S>{},
+            "hana::transform(xs, f) requires xs to be a Functor");
+        #endif
+
+            return Transform::apply(static_cast<Xs&&>(xs), static_cast<F&&>(f));
         }
     };
 
-    constexpr _transform transform{};
+    namespace {
+        constexpr auto const& transform = detail::static_constexpr<_transform>;
+    }
 #endif
 
     //! Apply a function on all the elements of a structure satisfying a
@@ -224,19 +227,23 @@ namespace boost { namespace hana {
     struct _adjust_if {
         template <typename Xs, typename Pred, typename F>
         constexpr decltype(auto) operator()(Xs&& xs, Pred&& pred, F&& f) const {
-#ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
-            static_assert(_models<Functor, typename datatype<Xs>::type>{},
+            using S = typename datatype<Xs>::type;
+            using AdjustIf = adjust_if_impl<S>;
+
+        #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
+            static_assert(_models<Functor, S>{},
             "hana::adjust_if(xs, pred, f) requires xs to be a Functor");
-#endif
-            return adjust_if_impl<typename datatype<Xs>::type>::apply(
-                static_cast<Xs&&>(xs),
-                static_cast<Pred&&>(pred),
-                static_cast<F&&>(f)
-            );
+        #endif
+
+            return AdjustIf::apply(static_cast<Xs&&>(xs),
+                                   static_cast<Pred&&>(pred),
+                                   static_cast<F&&>(f));
         }
     };
 
-    constexpr _adjust_if adjust_if{};
+    namespace {
+        constexpr auto const& adjust_if = detail::static_constexpr<_adjust_if>;
+    }
 #endif
 
     //! Apply a function on all the elements of a structure that compare
@@ -279,10 +286,11 @@ namespace boost { namespace hana {
     struct _adjust {
         template <typename Xs, typename Value, typename F>
         constexpr decltype(auto) operator()(Xs&& xs, Value&& value, F&& f) const {
-#ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
+        #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
             static_assert(_models<Functor, typename datatype<Xs>::type>{},
             "hana::adjust(xs, value, f) requires xs to be a Functor");
-#endif
+        #endif
+
             return adjust_impl<typename datatype<Xs>::type>::apply(
                 static_cast<Xs&&>(xs),
                 static_cast<Value&&>(value),
@@ -291,7 +299,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _adjust adjust{};
+    namespace {
+        constexpr auto const& adjust = detail::static_constexpr<_adjust>;
+    }
 #endif
 
     //! Replace all the elements of a structure satisfying a `predicate`
@@ -345,7 +355,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _replace_if replace_if{};
+    namespace {
+        constexpr auto const& replace_if = detail::static_constexpr<_replace_if>;
+    }
 #endif
 
     //! Replace all the elements of a structure that compare equal
@@ -400,7 +412,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _replace replace{};
+    namespace {
+        constexpr auto const& replace = detail::static_constexpr<_replace>;
+    }
 #endif
 
     //! Replace all the elements of a structure with a fixed value.
@@ -447,7 +461,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _fill fill{};
+    namespace {
+        constexpr auto const& fill = detail::static_constexpr<_fill>;
+    }
 #endif
 }} // end namespace boost::hana
 

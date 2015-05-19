@@ -11,6 +11,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_FWD_TRAVERSABLE_HPP
 
 #include <boost/hana/config.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/fwd/applicative.hpp>
 #include <boost/hana/fwd/core/datatype.hpp>
 #include <boost/hana/fwd/core/models.hpp>
@@ -174,8 +175,10 @@ namespace boost { namespace hana {
         }
     };
 
-    template <typename A>
-    constexpr _sequence<A> sequence{};
+    namespace {
+        template <typename A>
+        constexpr auto const& sequence = detail::static_constexpr<_sequence<A>>;
+    }
 #endif
 
     //! Map each element of a structure to an `Applicative`, and then do
@@ -239,8 +242,10 @@ namespace boost { namespace hana {
         }
     };
 
-    template <typename A>
-    constexpr _traverse<A> traverse{};
+    namespace {
+        template <typename A>
+        constexpr auto const& traverse = detail::static_constexpr<_traverse<A>>;
+    }
 #endif
 }} // end namespace boost::hana
 

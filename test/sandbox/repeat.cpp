@@ -87,7 +87,7 @@ namespace boost { namespace hana {
     //////////////////////////////////////////////////////////////////////////
     template <>
     struct models_impl<Sequence, LazyList>
-        : decltype(true_)
+        : _integral_constant<bool, true>
     { };
 }}
 

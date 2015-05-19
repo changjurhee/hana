@@ -76,7 +76,13 @@ namespace boost { namespace hana {
     //! Example
     //! -------
     //! @snippet example/pair.cpp make_pair
+#ifdef BOOST_HANA_DOXYGEN_INVOKED
     constexpr auto make_pair = make<Pair>;
+#else
+    namespace {
+        constexpr auto const& make_pair = make<Pair>;
+    }
+#endif
 }} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_PAIR_HPP

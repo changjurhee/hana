@@ -782,7 +782,7 @@ namespace boost { namespace hana {
         template <typename T, detail::std::size_t ...i>
         static constexpr auto
         repeat_helper(_type<T>, detail::std::index_sequence<i...>)
-        { return make_tuple_t<tuple_detail::expand<!!i, T>...>(); }
+        { return gcc_wknd::make_tuple_t<tuple_detail::expand<!!i, T>...>(); }
 
         template <typename N, typename X>
         static constexpr decltype(auto) apply(N const&, X&& x) {
@@ -881,7 +881,7 @@ namespace boost { namespace hana {
     //////////////////////////////////////////////////////////////////////////
     template <>
     struct models_impl<Sequence, Tuple>
-        : decltype(true_)
+        : _integral_constant<bool, true>
     { };
 
     // Credits: implementation adapted from http://github.com/alexk7/hel.

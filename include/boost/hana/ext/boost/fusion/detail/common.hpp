@@ -61,7 +61,7 @@ namespace boost { namespace hana {
     //////////////////////////////////////////////////////////////////////////
     template <typename S>
     struct models_impl<Sequence, S, when<detail::is_fusion_sequence<S>{}()>>
-        : decltype(true_)
+        : _integral_constant<bool, true>
     { };
 }} // end namespace boost::hana
 

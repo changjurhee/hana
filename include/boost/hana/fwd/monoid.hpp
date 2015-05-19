@@ -11,6 +11,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_FWD_MONOID_HPP
 
 #include <boost/hana/config.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/fwd/core/datatype.hpp>
 #include <boost/hana/fwd/core/default.hpp>
 #include <boost/hana/fwd/core/models.hpp>
@@ -166,7 +167,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _plus plus{};
+    namespace {
+        constexpr auto const& plus = detail::static_constexpr<_plus>;
+    }
 #endif
 
     //! Identity of `plus`.
@@ -200,8 +203,10 @@ namespace boost { namespace hana {
         { return zero_impl<M>::apply(); }
     };
 
-    template <typename M>
-    constexpr _zero<M> zero{};
+    namespace {
+        template <typename M>
+        constexpr auto const& zero = detail::static_constexpr<_zero<M>>;
+    }
 #endif
 }} // end namespace boost::hana
 

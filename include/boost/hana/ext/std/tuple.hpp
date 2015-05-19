@@ -191,7 +191,7 @@ namespace boost { namespace hana {
     //////////////////////////////////////////////////////////////////////////
     template <>
     struct models_impl<Sequence, ext::std::Tuple>
-        : decltype(true_)
+        : _integral_constant<bool, true>
     { };
 }} // end namespace boost::hana
 

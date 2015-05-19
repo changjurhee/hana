@@ -10,6 +10,9 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_TYPE_HPP
 #define BOOST_HANA_FWD_TYPE_HPP
 
+#include <boost/hana/detail/static_constexpr.hpp>
+
+
 namespace boost { namespace hana {
     //! @ingroup group-datatypes
     //! Represents a C++ type.
@@ -172,8 +175,10 @@ namespace boost { namespace hana {
         struct _;
     };
 
-    template <typename T>
-    constexpr typename _type<T>::_ type{};
+    namespace {
+        template <typename T>
+        constexpr auto const& type = detail::static_constexpr<typename _type<T>::_>;
+    }
 #endif
 
     namespace gcc_wknd {
@@ -243,7 +248,9 @@ namespace boost { namespace hana {
         constexpr auto operator()(T&&) const;
     };
 
-    constexpr _decltype decltype_{};
+    namespace {
+        constexpr auto const& decltype_ = detail::static_constexpr<_decltype>;
+    }
 #endif
 
 #ifdef BOOST_HANA_DOXYGEN_INVOKED
@@ -294,7 +301,9 @@ namespace boost { namespace hana {
         constexpr auto operator()(T&&) const;
     };
 
-    constexpr _sizeof sizeof_{};
+    namespace {
+        constexpr auto const& sizeof_ = detail::static_constexpr<_sizeof>;
+    }
 #endif
 
     //! `alignof` keyword, lifted to Hana.
@@ -330,7 +339,9 @@ namespace boost { namespace hana {
         constexpr auto operator()(T&&) const;
     };
 
-    constexpr _alignof alignof_{};
+    namespace {
+        constexpr auto const& alignof_ = detail::static_constexpr<_alignof>;
+    }
 #endif
 
     //! Checks whether a SFINAE-friendly expression is valid.
@@ -381,7 +392,9 @@ namespace boost { namespace hana {
         constexpr auto operator()(F&&, Args&&...) const;
     };
 
-    constexpr _is_valid is_valid{};
+    namespace {
+        constexpr auto const& is_valid = detail::static_constexpr<_is_valid>;
+    }
 #endif
 
     //! @ingroup group-datatypes
@@ -487,8 +500,10 @@ namespace boost { namespace hana {
     template <template <typename ...> class F>
     struct _template;
 
-    template <template <typename ...> class F>
-    constexpr _template<F> template_{};
+    namespace {
+        template <template <typename ...> class F>
+        constexpr auto const& template_ = detail::static_constexpr<_template<F>>;
+    }
 #endif
 
     //! Lift a MPL-style metafunction to a function on `Type`s.
@@ -514,8 +529,11 @@ namespace boost { namespace hana {
     template <template <typename ...> class f>
     struct _metafunction;
 
-    template <template <typename ...> class f>
-    constexpr _metafunction<f> metafunction{};
+    namespace {
+        template <template <typename ...> class f>
+        constexpr auto const& metafunction =
+                                    detail::static_constexpr<_metafunction<f>>;
+    }
 #endif
 
     //! Lift a MPL-style metafunction class to a function on `Type`s.
@@ -543,8 +561,11 @@ namespace boost { namespace hana {
         : _metafunction<F::template apply>
     { };
 
-    template <typename F>
-    constexpr _metafunction_class<F> metafunction_class{};
+    namespace {
+        template <typename F>
+        constexpr auto const& metafunction_class =
+                            detail::static_constexpr<_metafunction_class<F>>;
+    }
 #endif
 
     //! Turn a `Metafunction` into a function taking `Type`s and returning a
@@ -593,7 +614,9 @@ namespace boost { namespace hana {
         { return {}; }
     };
 
-    constexpr _make_integral integral{};
+    namespace {
+        constexpr auto const& integral = detail::static_constexpr<_make_integral>;
+    }
 #endif
 
     //! Alias to `integral(metafunction<F>)`, provided for convenience.
@@ -603,8 +626,17 @@ namespace boost { namespace hana {
     //! Example
     //! -------
     //! @snippet example/type.cpp trait
+#ifdef BOOST_HANA_DOXYGEN_INVOKED
     template <template <typename ...> class F>
     constexpr auto trait = integral(metafunction<F>);
+#else
+    namespace {
+        template <template <typename ...> class F>
+        constexpr auto const& trait = detail::static_constexpr<
+            decltype(integral(metafunction<F>))
+        >;
+    }
+#endif
 }} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_TYPE_HPP

@@ -12,6 +12,7 @@ Distributed under the Boost Software License, Version 1.0.
 
 #include <boost/hana/config.hpp>
 #include <boost/hana/detail/create.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/fwd/core/make.hpp>
 
 
@@ -65,7 +66,13 @@ namespace boost { namespace hana {
 
     //! Alias to `make<Tuple>`; provided for convenience.
     //! @relates Tuple
+#ifdef BOOST_HANA_DOXYGEN_INVOKED
     constexpr auto make_tuple = make<Tuple>;
+#else
+    namespace {
+        constexpr auto const& make_tuple = make<Tuple>;
+    }
+#endif
 
     //! Create a `Tuple` specialized for holding `Type`s.
     //! @relates Tuple
@@ -86,11 +93,16 @@ namespace boost { namespace hana {
     template <typename ...T>
     struct _tuple_t;
 
-    template <typename ...T>
-    constexpr typename _tuple_t<T...>::_ make_tuple_t() { return {}; }
+    namespace gcc_wknd {
+        template <typename ...T>
+        constexpr typename _tuple_t<T...>::_ make_tuple_t() { return {}; }
+    }
 
-    template <typename ...T>
-    constexpr typename _tuple_t<T...>::_ tuple_t{};
+    namespace {
+        template <typename ...T>
+        constexpr auto const& tuple_t =
+                        detail::static_constexpr<typename _tuple_t<T...>::_>;
+    }
 #endif
 
     //! Create a `Tuple` specialized for holding `IntegralConstant`s.
@@ -112,8 +124,10 @@ namespace boost { namespace hana {
     template <typename T, T ...v>
     struct _tuple_c;
 
-    template <typename T, T ...v>
-    constexpr _tuple_c<T, v...> tuple_c{};
+    namespace {
+        template <typename T, T ...v>
+        constexpr auto const& tuple_c = detail::static_constexpr<_tuple_c<T, v...>>;
+    }
 #endif
 }} // end namespace boost::hana
 

@@ -11,6 +11,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_FWD_SEARCHABLE_HPP
 
 #include <boost/hana/config.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/functional/flip.hpp>
 #include <boost/hana/functional/infix.hpp>
 #include <boost/hana/fwd/core/datatype.hpp>
@@ -186,7 +187,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _any_of any_of{};
+    namespace {
+        constexpr auto const& any_of = detail::static_constexpr<_any_of>;
+    }
 #endif
 
     //! Returns whether any key of the structure is true-valued.
@@ -223,7 +226,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _any any{};
+    namespace {
+        constexpr auto const& any = detail::static_constexpr<_any>;
+    }
 #endif
 
     //! Returns whether all the keys of the structure satisfy the `predicate`.
@@ -268,7 +273,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _all_of all_of{};
+    namespace {
+        constexpr auto const& all_of = detail::static_constexpr<_all_of>;
+    }
 #endif
 
     //! Returns whether all the keys of the structure are true-valued.
@@ -305,7 +312,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _all all{};
+    namespace {
+        constexpr auto const& all = detail::static_constexpr<_all>;
+    }
 #endif
 
     //! Returns whether none of the keys of the structure satisfy the
@@ -351,7 +360,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _none_of none_of{};
+    namespace {
+        constexpr auto const& none_of = detail::static_constexpr<_none_of>;
+    }
 #endif
 
     //! Returns whether all of the keys of the structure are false-valued.
@@ -388,7 +399,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _none none{};
+    namespace {
+        constexpr auto const& none = detail::static_constexpr<_none>;
+    }
 #endif
 
     //! Returns whether the key occurs in the structure.
@@ -439,7 +452,14 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr auto contains = infix(_contains{});
+    namespace detail {
+        template <typename ...>
+        constexpr auto contains_v = infix(_contains{});
+    }
+
+    namespace {
+        constexpr auto const& contains = detail::contains_v<>;
+    }
 #endif
 
     //! Return whether the key occurs in the structure.
@@ -455,7 +475,18 @@ namespace boost { namespace hana {
     //! Example
     //! -------
     //! @snippet example/searchable.cpp in
+#ifdef BOOST_HANA_DOXYGEN_INVOKED
     constexpr auto in = infix(flip(contains));
+#else
+    namespace detail {
+        template <typename ...>
+        constexpr auto in_v = infix(flip(contains));
+    }
+
+    namespace {
+        constexpr auto const& in = detail::in_v<>;
+    }
+#endif
 
     //! Finds the value associated to the first key satisfying a predicate.
     //! @relates Searchable
@@ -507,7 +538,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _find_if find_if{};
+    namespace {
+        constexpr auto const& find_if = detail::static_constexpr<_find_if>;
+    }
 #endif
 
     //! Finds the value associated to the given key in a structure.
@@ -558,7 +591,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _find find{};
+    namespace {
+        constexpr auto const& find = detail::static_constexpr<_find>;
+    }
 #endif
 
     //! Returns the value associated to the given key in a structure, or fail.
@@ -627,7 +662,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _at_key at_key{};
+    namespace {
+        constexpr auto const& at_key = detail::static_constexpr<_at_key>;
+    }
 #endif
 
     //! Returns whether a structure contains a subset of the keys of
@@ -704,7 +741,14 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr auto is_subset = infix(_is_subset{});
+    namespace detail {
+        template <typename ...>
+        constexpr auto is_subset_v = infix(_is_subset{});
+    }
+
+    namespace {
+        constexpr auto const& is_subset = detail::is_subset_v<>;
+    }
 #endif
 }} // end namespace boost::hana
 

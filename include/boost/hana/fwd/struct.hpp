@@ -12,6 +12,7 @@ Distributed under the Boost Software License, Version 1.0.
 
 #include <boost/hana/config.hpp>
 #include <boost/hana/detail/keys_fwd.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/fwd/core/datatype.hpp>
 #include <boost/hana/fwd/core/models.hpp>
 
@@ -181,8 +182,10 @@ namespace boost { namespace hana {
         { return accessors_impl<S>::apply(); }
     };
 
-    template <typename S>
-    constexpr _accessors<S> accessors{};
+    namespace {
+        template <typename S>
+        constexpr auto const& accessors = detail::static_constexpr<_accessors<S>>;
+    }
 #endif
 
     //! Returns a `Sequence` containing the name of the members of
@@ -236,7 +239,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _members members{};
+    namespace {
+        constexpr auto const& members = detail::static_constexpr<_members>;
+    }
 #endif
 
     // Note:

@@ -10,6 +10,9 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_CORE_IS_A_HPP
 #define BOOST_HANA_FWD_CORE_IS_A_HPP
 
+#include <boost/hana/detail/static_constexpr.hpp>
+
+
 namespace boost { namespace hana {
     //! @ingroup group-core
     //! Returns whether the data type of an object matches a given data type.
@@ -39,15 +42,24 @@ namespace boost { namespace hana {
     template <typename DataType, typename ...T>
     struct _is_a;
 
-    template <typename DataType, typename ...T>
-    constexpr _is_a<DataType, T...> is_a{};
+    namespace {
+        template <typename DataType, typename ...T>
+        constexpr auto const& is_a = detail::static_constexpr<_is_a<DataType, T...>>;
+    }
 #endif
 
     //! @ingroup group-core
     //! Equivalent to `is_a`; provided for consistency with the rules of the
     //! English language.
+#ifdef BOOST_HANA_DOXYGEN_INVOKED
     template <typename DataType, typename ...T>
     constexpr auto is_an = is_a<DataType, T...>;
+#else
+    namespace {
+        template <typename DataType, typename ...T>
+        constexpr auto const& is_an = is_a<DataType, T...>;
+    }
+#endif
 }} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_CORE_IS_A_HPP

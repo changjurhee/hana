@@ -11,6 +11,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_FWD_SEQUENCE_HPP
 
 #include <boost/hana/config.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/detail/std/size_t.hpp>
 #include <boost/hana/fwd/core/datatype.hpp>
 #include <boost/hana/fwd/core/models.hpp>
@@ -277,7 +278,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _cartesian_product cartesian_product{};
+    namespace {
+        constexpr auto const& cartesian_product = detail::static_constexpr<_cartesian_product>;
+    }
 #endif
 
     //! Group adjacent elements of a sequence that all respect a binary
@@ -373,35 +376,43 @@ namespace boost { namespace hana {
         constexpr decltype(auto) operator()(Predicate&&) const;
     };
 
+    template <typename ...>
     struct _group {
         template <typename Xs>
         constexpr decltype(auto) operator()(Xs&& xs) const {
+            using S = typename datatype<Xs>::type;
+            using Group = group_impl<S>;
+
         #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
-            static_assert(_models<Sequence, typename datatype<Xs>::type>{},
+            static_assert(_models<Sequence, S>{},
             "hana::group(xs) requires xs to be a Sequence");
         #endif
-            return group_impl<typename datatype<Xs>::type>::apply(
-                static_cast<Xs&&>(xs)
-            );
+
+            return Group::apply(static_cast<Xs&&>(xs));
         }
 
         template <typename Xs, typename Predicate>
         constexpr decltype(auto) operator()(Xs&& xs, Predicate&& pred) const {
+            using S = typename datatype<Xs>::type;
+            using GroupPred = group_pred_impl<S>;
+
         #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
-            static_assert(_models<Sequence, typename datatype<Xs>::type>{},
+            static_assert(_models<Sequence, S>{},
             "hana::group(xs, predicate) requires xs to be a Sequence");
         #endif
-            return group_pred_impl<typename datatype<Xs>::type>::apply(
-                static_cast<Xs&&>(xs),
-                static_cast<Predicate&&>(pred)
-            );
+
+            return GroupPred::apply(static_cast<Xs&&>(xs),
+                                    static_cast<Predicate&&>(pred));
         }
 
-        static constexpr _group_by by{};
+        static constexpr auto const& by = detail::static_constexpr<_group_by>;
     };
-    constexpr _group_by _group::by;
+    template <typename ...Dummy>
+    constexpr _group_by const& _group<Dummy...>::by;
 
-    constexpr _group group{};
+    namespace {
+        constexpr auto const& group = detail::static_constexpr<_group<>>;
+    }
 #endif
 
     //! Remove the last element of a non-empty sequence.
@@ -436,7 +447,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _init init{};
+    namespace {
+        constexpr auto const& init = detail::static_constexpr<_init>;
+    }
 #endif
 
     //! Insert a value between each pair of elements in a sequence.
@@ -480,7 +493,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _intersperse intersperse{};
+    namespace {
+        constexpr auto const& intersperse = detail::static_constexpr<_intersperse>;
+    }
 #endif
 
     //! Partition a sequence based on a `predicate`.
@@ -534,7 +549,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _partition partition{};
+    namespace {
+        constexpr auto const& partition = detail::static_constexpr<_partition>;
+    }
 #endif
 
     //! Return a sequence of all the permutations of the given sequence.
@@ -573,7 +590,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _permutations permutations{};
+    namespace {
+        constexpr auto const& permutations = detail::static_constexpr<_permutations>;
+    }
 #endif
 
     //! Remove the element at a given index from a sequence.
@@ -618,7 +637,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _remove_at remove_at{};
+    namespace {
+        constexpr auto const& remove_at = detail::static_constexpr<_remove_at>;
+    }
 #endif
 
     //! Equivalent to `remove_at`; provided for convenience.
@@ -676,7 +697,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _reverse reverse{};
+    namespace {
+        constexpr auto const& reverse = detail::static_constexpr<_reverse>;
+    }
 #endif
 
     //! Fold a Sequence and return a list containing the successive reduction
@@ -888,14 +911,19 @@ namespace boost { namespace hana {
         }
     };
 
+    template <typename ...>
     struct _scan : _scan_left {
-        static constexpr _scan_left left{};
-        static constexpr _scan_right right{};
+        static constexpr auto const& left = detail::static_constexpr<_scan_left>;
+        static constexpr auto const& right = detail::static_constexpr<_scan_right>;
     };
-    constexpr _scan_left _scan::left;
-    constexpr _scan_right _scan::right;
+    template <typename ...Dummy>
+    constexpr _scan_left const& _scan<Dummy...>::left;
+    template <typename ...Dummy>
+    constexpr _scan_right const& _scan<Dummy...>::right;
 
-    constexpr _scan scan{};
+    namespace {
+        constexpr auto const& scan = detail::static_constexpr<_scan<>>;
+    }
 #endif
 
     //! Extract a subsequence delimited by the given indices.
@@ -947,7 +975,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _slice slice{};
+    namespace {
+        constexpr auto const& slice = detail::static_constexpr<_slice>;
+    }
 #endif
 
     //! Equivalent to `slice`; provided for convenience.
@@ -966,8 +996,10 @@ namespace boost { namespace hana {
     template <detail::std::size_t from, detail::std::size_t to>
     struct _slice_c;
 
-    template <detail::std::size_t from, detail::std::size_t to>
-    constexpr _slice_c<from, to> slice_c{};
+    namespace {
+        template <detail::std::size_t from, detail::std::size_t to>
+        constexpr auto const& slice_c = detail::static_constexpr<_slice_c<from, to>>;
+    }
 #endif
 
     //! Sort a sequence, optionally based on a custom `predicate`.
@@ -1068,35 +1100,43 @@ namespace boost { namespace hana {
         constexpr decltype(auto) operator()(Predicate&&) const;
     };
 
+    template <typename ...>
     struct _sort {
         template <typename Xs>
         constexpr decltype(auto) operator()(Xs&& xs) const {
+            using S = typename datatype<Xs>::type;
+            using Sort = sort_impl<S>;
+
         #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
-            static_assert(_models<Sequence, typename datatype<Xs>::type>{},
+            static_assert(_models<Sequence, S>{},
             "hana::sort(xs) requires xs to be a Sequence");
         #endif
-            return sort_impl<typename datatype<Xs>::type>::apply(
-                static_cast<Xs&&>(xs)
-            );
+
+            return Sort::apply(static_cast<Xs&&>(xs));
         }
 
         template <typename Xs, typename Predicate>
         constexpr decltype(auto) operator()(Xs&& xs, Predicate&& pred) const {
+            using S = typename datatype<Xs>::type;
+            using SortPred = sort_pred_impl<S>;
+
         #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
-            static_assert(_models<Sequence, typename datatype<Xs>::type>{},
+            static_assert(_models<Sequence, S>{},
             "hana::sort(xs, predicate) requires xs to be a Sequence");
         #endif
-            return sort_pred_impl<typename datatype<Xs>::type>::apply(
-                static_cast<Xs&&>(xs),
-                static_cast<Predicate&&>(pred)
-            );
+
+            return SortPred::apply(static_cast<Xs&&>(xs),
+                                   static_cast<Predicate&&>(pred));
         }
 
-        static constexpr _sort_by by{};
+        static constexpr auto const& by = detail::static_constexpr<_sort_by>;
     };
-    constexpr _sort_by _sort::by;
+    template <typename ...Dummy>
+    constexpr _sort_by const& _sort<Dummy...>::by;
 
-    constexpr _sort sort{};
+    namespace {
+        constexpr auto const& sort = detail::static_constexpr<_sort<>>;
+    }
 #endif
 
     //! Returns a `Product` containing the longest prefix of a sequence
@@ -1149,7 +1189,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _span span{};
+    namespace {
+        constexpr auto const& span = detail::static_constexpr<_span>;
+    }
 #endif
 
     //! Returns the elements at the given indices of a sequence.
@@ -1206,7 +1248,9 @@ namespace boost { namespace hana {
         }
     };
 
-    static constexpr _subsequence subsequence{};
+    namespace {
+        constexpr auto const& subsequence = detail::static_constexpr<_subsequence>;
+    }
 #endif
 
     //! Returns the first `n` elements of a sequence.
@@ -1286,13 +1330,19 @@ namespace boost { namespace hana {
         }
     };
 
+    template <typename ...>
     struct _take : _take_at_most {
-        static constexpr _take_exactly exactly{};
-        static constexpr _take_at_most at_most{};
+        static constexpr auto const& exactly = detail::static_constexpr<_take_exactly>;
+        static constexpr auto const& at_most = detail::static_constexpr<_take_at_most>;
     };
-    constexpr _take_exactly _take::exactly;
-    constexpr _take_at_most _take::at_most;
-    constexpr _take take{};
+    template <typename ...Dummy>
+    constexpr _take_exactly const& _take<Dummy...>::exactly;
+    template <typename ...Dummy>
+    constexpr _take_at_most const& _take<Dummy...>::at_most;
+
+    namespace {
+        constexpr auto const& take = detail::static_constexpr<_take<>>;
+    }
 #endif
 
     //! Equivalent to `take`; provided for convenience.
@@ -1311,8 +1361,10 @@ namespace boost { namespace hana {
     template <detail::std::size_t n>
     struct _take_c;
 
-    template <detail::std::size_t n>
-    constexpr _take_c<n> take_c{};
+    namespace {
+        template <detail::std::size_t n>
+        constexpr auto const& take_c = detail::static_constexpr<_take_c<n>>;
+    }
 #endif
 
     //! Take elements from a sequence until the `predicate` is satisfied.
@@ -1359,7 +1411,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _take_until take_until{};
+    namespace {
+        constexpr auto const& take_until = detail::static_constexpr<_take_until>;
+    }
 #endif
 
     //! Take elements from a sequence while the `predicate` is satisfied.
@@ -1405,7 +1459,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _take_while take_while{};
+    namespace {
+        constexpr auto const& take_while = detail::static_constexpr<_take_while>;
+    }
 #endif
 
     //! Dual operation to `fold` for sequences.
@@ -1511,16 +1567,20 @@ namespace boost { namespace hana {
         "hana::unfold<S> requires S to be a Sequence");
     #endif
 
-        static constexpr _unfold_left<S> left{};
-        static constexpr _unfold_right<S> right{};
+        static constexpr _unfold_left<S> const& left
+                                = detail::static_constexpr<_unfold_left<S>>;
+        static constexpr _unfold_right<S> const& right
+                                = detail::static_constexpr<_unfold_right<S>>;
     };
     template <typename S>
-    constexpr _unfold_left<S> _unfold<S>::left;
+    constexpr _unfold_left<S> const& _unfold<S>::left;
     template <typename S>
-    constexpr _unfold_right<S> _unfold<S>::right;
+    constexpr _unfold_right<S> const& _unfold<S>::right;
 
-    template <typename S>
-    constexpr _unfold<S> unfold{};
+    namespace {
+        template <typename S>
+        constexpr auto const& unfold = detail::static_constexpr<_unfold<S>>;
+    }
 #endif
 
     //! Unzip a sequence of sequences.
@@ -1563,7 +1623,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _unzip unzip{};
+    namespace {
+        constexpr auto const& unzip = detail::static_constexpr<_unzip>;
+    }
 #endif
 
     //! Zip one sequence or more, either with a given function or into a Tuple.
@@ -1674,13 +1736,14 @@ namespace boost { namespace hana {
 
     template <typename S, typename = void>
     struct zip_unsafe_impl;
+    template <typename ...>
     struct _zip_unsafe {
-        static constexpr _zip_unsafe_with with{};
-
+        static constexpr auto const& with = detail::static_constexpr<_zip_unsafe_with>;
         template <typename Xs, typename ...Ys>
         constexpr decltype(auto) operator()(Xs&& xs, Ys&& ...ys) const;
     };
-    constexpr _zip_unsafe_with _zip_unsafe::with;
+    template <typename ...T>
+    constexpr _zip_unsafe_with const& _zip_unsafe<T...>::with;
 
 
     template <typename S, typename = void>
@@ -1693,22 +1756,29 @@ namespace boost { namespace hana {
 
     template <typename S, typename = void>
     struct zip_shortest_impl;
+    template <typename ...>
     struct _zip_shortest {
-        static constexpr _zip_shortest_with with{};
+        static constexpr auto const& with = detail::static_constexpr<_zip_shortest_with>;
         template <typename Xs, typename ...Ys>
         constexpr decltype(auto) operator()(Xs&& xs, Ys&& ...ys) const;
     };
-    constexpr _zip_shortest_with _zip_shortest::with;
+    template <typename ...T>
+    constexpr _zip_shortest_with const& _zip_shortest<T...>::with;
 
 
-    struct _zip : _zip_shortest {
-        static constexpr _zip_shortest shortest{};
-        static constexpr _zip_unsafe unsafe{};
+    template <typename ...>
+    struct _zip : _zip_shortest<> {
+        static constexpr auto const& shortest = detail::static_constexpr<_zip_shortest<>>;
+        static constexpr auto const& unsafe = detail::static_constexpr<_zip_unsafe<>>;
     };
-    constexpr _zip_shortest _zip::shortest;
-    constexpr _zip_unsafe _zip::unsafe;
+    template <typename ...Dummy>
+    constexpr _zip_shortest<> const& _zip<Dummy...>::shortest;
+    template <typename ...Dummy>
+    constexpr _zip_unsafe<> const& _zip<Dummy...>::unsafe;
 
-    constexpr _zip zip{};
+    namespace {
+        constexpr auto const& zip = detail::static_constexpr<_zip<>>;
+    }
 #endif
 }} // end namespace boost::hana
 

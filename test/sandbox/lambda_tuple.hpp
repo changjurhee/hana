@@ -234,7 +234,7 @@ namespace boost { namespace hana {
     //////////////////////////////////////////////////////////////////////////
     template <>
     struct models_impl<Sequence, sandbox::LambdaTuple>
-        : decltype(true_)
+        : _integral_constant<bool, true>
     { };
 
     template <>

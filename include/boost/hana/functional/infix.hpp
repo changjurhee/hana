@@ -11,6 +11,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_FUNCTIONAL_INFIX_HPP
 
 #include <boost/hana/config.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/detail/std/decay.hpp>
 #include <boost/hana/detail/std/move.hpp>
 #include <boost/hana/detail/std/remove_cv.hpp>
@@ -180,7 +181,10 @@ namespace boost { namespace hana {
         }
     } // end namespace infix_detail
 
-    constexpr infix_detail::make_infix<false, false> infix{};
+    namespace {
+        constexpr auto const& infix =
+            detail::static_constexpr<infix_detail::make_infix<false, false>>;
+    }
 #endif
 }} // end namespace boost::hana
 

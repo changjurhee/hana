@@ -10,6 +10,9 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_CORE_MODELS_HPP
 #define BOOST_HANA_FWD_CORE_MODELS_HPP
 
+#include <boost/hana/detail/static_constexpr.hpp>
+
+
 namespace boost { namespace hana {
     //! @ingroup group-core
     //! Returns whether the data type of an object is a model of the
@@ -67,8 +70,10 @@ namespace boost { namespace hana {
     template <typename Concept, typename ...T>
     struct _models;
 
-    template <typename Concept, typename ...T>
-    constexpr _models<Concept, T...> models{};
+    namespace {
+        template <typename Concept, typename ...T>
+        constexpr auto const& models = detail::static_constexpr<_models<Concept, T...>>;
+    }
 #endif
 }} // end namespace boost::hana
 

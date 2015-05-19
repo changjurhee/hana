@@ -10,6 +10,9 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_CORE_OPERATORS_HPP
 #define BOOST_HANA_FWD_CORE_OPERATORS_HPP
 
+#include <boost/hana/detail/static_constexpr.hpp>
+
+
 namespace boost { namespace hana {
     //! @ingroup group-core
     //! Namespace containing operators provided as an alias to some methods.
@@ -207,8 +210,11 @@ namespace boost { namespace hana {
     template <typename Datatype, typename Method, typename = void>
     struct _has_operator;
 
-    template <typename Datatype, typename Method>
-    constexpr _has_operator<Datatype, Method> has_operator{};
+    namespace {
+        template <typename Datatype, typename Method>
+        constexpr auto const& has_operator =
+                detail::static_constexpr<_has_operator<Datatype, Method>>;
+    }
 #endif
 }} // end namespace boost::hana
 

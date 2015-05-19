@@ -12,6 +12,7 @@ Distributed under the Boost Software License, Version 1.0.
 
 #include <boost/hana/config.hpp>
 #include <boost/hana/detail/create.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/detail/std/move.hpp>
 #include <boost/hana/detail/variadic/foldl1.hpp>
 
@@ -102,7 +103,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _make_compose compose{};
+    namespace {
+        constexpr auto const& compose = detail::static_constexpr<_make_compose>;
+    }
 #endif
 }} // end namespace boost::hana
 

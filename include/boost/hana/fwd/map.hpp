@@ -12,6 +12,7 @@ Distributed under the Boost Software License, Version 1.0.
 
 #include <boost/hana/detail/insert_fwd.hpp>
 #include <boost/hana/detail/keys_fwd.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/fwd/core/make.hpp>
 
 
@@ -81,7 +82,13 @@ namespace boost { namespace hana {
     //! Example
     //! -------
     //! @snippet example/map.cpp make_map
+#ifdef BOOST_HANA_DOXYGEN_INVOKED
     constexpr auto make_map = make<Map>;
+#else
+    namespace {
+        constexpr auto const& make_map = make<Map>;
+    }
+#endif
 
     //! Returns a Sequence of the keys of the map, in unspecified order.
     //! @relates Map
@@ -113,7 +120,9 @@ namespace boost { namespace hana {
         constexpr decltype(auto) operator()(Map&& map) const;
     };
 
-    constexpr _values values{};
+    namespace {
+        constexpr auto const& values = detail::static_constexpr<_values>;
+    }
 #endif
 
     //! Inserts a new key/value pair in a `Map`.

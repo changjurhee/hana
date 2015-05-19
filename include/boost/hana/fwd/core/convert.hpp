@@ -11,6 +11,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_FWD_CORE_CONVERT_HPP
 
 #include <boost/hana/config.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 
 
 namespace boost { namespace hana {
@@ -99,8 +100,10 @@ namespace boost { namespace hana {
     template <typename To>
     struct _to;
 
-    template <typename To>
-    constexpr _to<To> to{};
+    namespace {
+        template <typename To>
+        constexpr auto const& to = detail::static_constexpr<_to<To>>;
+    }
 #endif
 
     //! @ingroup group-core

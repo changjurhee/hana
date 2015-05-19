@@ -11,6 +11,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_FWD_MONAD_PLUS_HPP
 
 #include <boost/hana/config.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/detail/std/is_same.hpp>
 #include <boost/hana/fwd/core/datatype.hpp>
 #include <boost/hana/fwd/core/models.hpp>
@@ -134,7 +135,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _concat concat{};
+    namespace {
+        constexpr auto const& concat = detail::static_constexpr<_concat>;
+    }
 #endif
 
     //! Identity of the monadic combination `concat`.
@@ -173,8 +176,10 @@ namespace boost { namespace hana {
         }
     };
 
-    template <typename M>
-    constexpr _empty<M> empty{};
+    namespace {
+        template <typename M>
+        constexpr auto const& empty = detail::static_constexpr<_empty<M>>;
+    }
 #endif
 
     //! Prepend an element to a monadic structure.
@@ -237,7 +242,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _prepend prepend{};
+    namespace {
+        constexpr auto const& prepend = detail::static_constexpr<_prepend>;
+    }
 #endif
 
     //! Append an element to a monadic structure.
@@ -296,7 +303,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _append append{};
+    namespace {
+        constexpr auto const& append = detail::static_constexpr<_append>;
+    }
 #endif
 
     //! Filter a monadic structure using a custom predicate.
@@ -372,7 +381,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _filter filter{};
+    namespace {
+        constexpr auto const& filter = detail::static_constexpr<_filter>;
+    }
 #endif
 
     //! Combine a monadic structure with itself `n` times.
@@ -439,7 +450,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _cycle cycle{};
+    namespace {
+        constexpr auto const& cycle = detail::static_constexpr<_cycle>;
+    }
 #endif
 
     //! Remove all the elements of a monadic structure that satisfy some
@@ -498,7 +511,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _remove_if remove_if{};
+    namespace {
+        constexpr auto const& remove_if = detail::static_constexpr<_remove_if>;
+    }
 #endif
 
     //! Remove all the elements of a monadic structure that are equal to some
@@ -558,7 +573,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _remove remove{};
+    namespace {
+        constexpr auto const& remove = detail::static_constexpr<_remove>;
+    }
 #endif
 
     //! Create a monadic structure by combining a lifted value with itself
@@ -623,8 +640,10 @@ namespace boost { namespace hana {
         }
     };
 
-    template <typename M>
-    constexpr _repeat<M> repeat{};
+    namespace {
+        template <typename M>
+        constexpr auto const& repeat = detail::static_constexpr<_repeat<M>>;
+    }
 #endif
 
     //! Inserts a value before each element of a monadic structure.
@@ -686,7 +705,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _prefix prefix{};
+    namespace {
+        constexpr auto const& prefix = detail::static_constexpr<_prefix>;
+    }
 #endif
 
     //! Inserts a value after each element of a monadic structure.
@@ -748,7 +769,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _suffix suffix{};
+    namespace {
+        constexpr auto const& suffix = detail::static_constexpr<_suffix>;
+    }
 #endif
 }} // end namespace boost::hana
 

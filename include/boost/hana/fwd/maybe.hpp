@@ -11,6 +11,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_FWD_MAYBE_HPP
 
 #include <boost/hana/core/operators.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/detail/std/move.hpp>
 
 
@@ -145,7 +146,9 @@ namespace boost { namespace hana {
         constexpr auto operator()(T&&) const;
     };
 
-    constexpr _make_just just{};
+    namespace {
+        constexpr auto const& just = detail::static_constexpr<_make_just>;
+    }
 #endif
 
     //! An empty optional value.
@@ -160,10 +163,14 @@ namespace boost { namespace hana {
 #else
     struct _nothing : operators::adl {
         static constexpr bool is_just = false;
-        struct hana { using datatype = Maybe; };
+
+        using hana = _nothing;
+        using datatype = Maybe;
     };
 
-    constexpr _nothing nothing{};
+    namespace {
+        constexpr auto const& nothing = detail::static_constexpr<_nothing>;
+    }
 #endif
 
     //! Create a `Maybe` with the result of a function, but only if a
@@ -207,7 +214,9 @@ namespace boost { namespace hana {
         constexpr decltype(auto) operator()(Pred&& pred, F&& f, X&& x) const;
     };
 
-    constexpr _only_when only_when{};
+    namespace {
+        constexpr auto const& only_when = detail::static_constexpr<_only_when>;
+    }
 #endif
 
     //! Apply a function to the contents of a `Maybe`, with a fallback
@@ -262,7 +271,9 @@ namespace boost { namespace hana {
         { return static_cast<Def&&>(def); }
     };
 
-    constexpr _maybe maybe{};
+    namespace {
+        constexpr auto const& maybe = detail::static_constexpr<_maybe>;
+    }
 #endif
 
     //! Return whether a `Maybe` contains a value.
@@ -285,7 +296,9 @@ namespace boost { namespace hana {
         constexpr auto operator()(M const&) const;
     };
 
-    constexpr _is_just is_just{};
+    namespace {
+        constexpr auto const& is_just = detail::static_constexpr<_is_just>;
+    }
 #endif
 
     //! Return whether a `Maybe` is empty.
@@ -308,7 +321,9 @@ namespace boost { namespace hana {
         constexpr auto operator()(M const&) const;
     };
 
-    constexpr _is_nothing is_nothing{};
+    namespace {
+        constexpr auto const& is_nothing = detail::static_constexpr<_is_nothing>;
+    }
 #endif
 
     //! Return the contents of a `Maybe`, with a fallback result.
@@ -338,7 +353,9 @@ namespace boost { namespace hana {
         constexpr decltype(auto) operator()(Default&& default_, M&& m) const;
     };
 
-    constexpr _from_maybe from_maybe{};
+    namespace {
+        constexpr auto const& from_maybe = detail::static_constexpr<_from_maybe>;
+    }
 #endif
 
     //! Extract the content of a `Maybe` or fail at compile-time.
@@ -366,7 +383,9 @@ namespace boost { namespace hana {
         constexpr decltype(auto) operator()(M&& m) const;
     };
 
-    constexpr _from_just from_just{};
+    namespace {
+        constexpr auto const& from_just = detail::static_constexpr<_from_just>;
+    }
 #endif
 
     //! Calls a function if the call expression is well-formed.
@@ -407,7 +426,9 @@ namespace boost { namespace hana {
         constexpr decltype(auto) operator()(F&& f) const;
     };
 
-    constexpr _sfinae sfinae{};
+    namespace {
+        constexpr auto const& sfinae = detail::static_constexpr<_sfinae>;
+    }
 #endif
 }} // end namespace boost::hana
 

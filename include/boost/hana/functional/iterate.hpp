@@ -191,8 +191,10 @@ namespace boost { namespace hana {
         }
     };
 
-    template <detail::std::size_t n>
-    constexpr _make_iterate<n> iterate{};
+    namespace {
+        template <detail::std::size_t n>
+        constexpr auto const& iterate = detail::static_constexpr<_make_iterate<n>>;
+    }
 #endif
 }} // end namespace boost::hana
 

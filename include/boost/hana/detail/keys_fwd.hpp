@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_DETAIL_KEYS_FWD_HPP
 #define BOOST_HANA_DETAIL_KEYS_FWD_HPP
 
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/fwd/core/datatype.hpp>
 #include <boost/hana/fwd/core/when.hpp>
 
@@ -30,7 +31,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _keys keys{};
+    namespace {
+        constexpr auto const& keys = detail::static_constexpr<_keys>;
+    }
 }} // end namespace boost::hana
 
 #endif // !BOOST_HANA_DETAIL_KEYS_FWD_HPP

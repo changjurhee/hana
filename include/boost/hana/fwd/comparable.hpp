@@ -11,6 +11,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_FWD_COMPARABLE_HPP
 
 #include <boost/hana/detail/create.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/fwd/core/datatype.hpp>
 
 
@@ -218,6 +219,12 @@ namespace boost { namespace hana {
     template <typename T, typename U, typename = void>
     struct equal_impl;
 
+    struct _equal_to {
+        template <typename X>
+        constexpr decltype(auto) operator()(X&& x) const;
+    };
+
+    template <typename ...>
     struct _equal {
         template <typename X, typename Y>
         constexpr decltype(auto) operator()(X&& x, Y&& y) const {
@@ -227,15 +234,14 @@ namespace boost { namespace hana {
             return Equal::apply(static_cast<X&&>(x), static_cast<Y&&>(y));
         }
 
-        struct _to {
-            template <typename X>
-            constexpr decltype(auto) operator()(X&& x) const;
-        };
-        static constexpr _to to{};
+        static constexpr auto const& to = detail::static_constexpr<_equal_to>;
     };
-    constexpr _equal::_to _equal::to;
+    template <typename ...Dummy>
+    constexpr _equal_to const& _equal<Dummy...>::to;
 
-    constexpr _equal equal{};
+    namespace {
+        constexpr auto const& equal = detail::static_constexpr<_equal<>>;
+    }
 #endif
 
     //! Returns a `Logical` representing whether `x` is not equal to `y`.
@@ -280,6 +286,12 @@ namespace boost { namespace hana {
     template <typename T, typename U, typename = void>
     struct not_equal_impl;
 
+    struct _not_equal_to {
+        template <typename X>
+        constexpr decltype(auto) operator()(X&& x) const;
+    };
+
+    template <typename ...>
     struct _not_equal {
         template <typename X, typename Y>
         constexpr decltype(auto) operator()(X&& x, Y&& y) const {
@@ -289,15 +301,14 @@ namespace boost { namespace hana {
             return NotEqual::apply(static_cast<X&&>(x), static_cast<Y&&>(y));
         }
 
-        struct _to {
-            template <typename X>
-            constexpr decltype(auto) operator()(X&& x) const;
-        };
-        static constexpr _to to{};
+        static constexpr auto const& to = detail::static_constexpr<_not_equal_to>;
     };
-    constexpr _not_equal::_to _not_equal::to;
+    template <typename ...Dummy>
+    constexpr _not_equal_to const& _not_equal<Dummy...>::to;
 
-    constexpr _not_equal not_equal{};
+    namespace {
+        constexpr auto const& not_equal = detail::static_constexpr<_not_equal<>>;
+    }
 #endif
 
     //! Returns a function performing `equal` after applying a transformation
@@ -342,7 +353,9 @@ namespace boost { namespace hana {
     template <typename F>
     struct _comparing;
 
-    constexpr detail::create<_comparing> comparing{};
+    namespace {
+        constexpr auto const& comparing = detail::static_constexpr<detail::create<_comparing>>;
+    }
 #endif
 }} // end namespace boost::hana
 

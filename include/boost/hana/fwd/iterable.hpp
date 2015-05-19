@@ -11,6 +11,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_FWD_ITERABLE_HPP
 
 #include <boost/hana/config.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/detail/std/size_t.hpp>
 #include <boost/hana/fwd/core/datatype.hpp>
 #include <boost/hana/fwd/core/models.hpp>
@@ -231,7 +232,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _head head{};
+    namespace {
+        constexpr auto const& head = detail::static_constexpr<_head>;
+    }
 #endif
 
     //! Returns a new iterable containing all but the first element of a
@@ -268,7 +271,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _tail tail{};
+    namespace {
+        constexpr auto const& tail = detail::static_constexpr<_tail>;
+    }
 #endif
 
     //! Returns whether the iterable is empty.
@@ -303,7 +308,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _is_empty is_empty{};
+    namespace {
+        constexpr auto const& is_empty = detail::static_constexpr<_is_empty>;
+    }
 #endif
 
     //! Returns the `n`th element of an iterable.
@@ -377,7 +384,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _at at{};
+    namespace {
+        constexpr auto const& at = detail::static_constexpr<_at>;
+    }
 #endif
 
     //! Equivalent to `at`; provided for convenience.
@@ -396,8 +405,10 @@ namespace boost { namespace hana {
     template <detail::std::size_t n>
     struct _at_c;
 
-    template <detail::std::size_t n>
-    constexpr _at_c<n> at_c{};
+    namespace {
+        template <detail::std::size_t n>
+        constexpr auto const& at_c = detail::static_constexpr<_at_c<n>>;
+    }
 #endif
 
     //! Returns the last element of a non-empty and finite iterable.
@@ -431,7 +442,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _last last{};
+    namespace {
+        constexpr auto const& last = detail::static_constexpr<_last>;
+    }
 #endif
 
     //! Drops the first `n` elements of an iterable and returns the rest.
@@ -517,13 +530,19 @@ namespace boost { namespace hana {
         }
     };
 
+    template <typename ...>
     struct _drop : _drop_at_most {
-        static constexpr _drop_exactly exactly{};
-        static constexpr _drop_at_most at_most{};
+        static constexpr auto const& exactly = detail::static_constexpr<_drop_exactly>;
+        static constexpr auto const& at_most = detail::static_constexpr<_drop_at_most>;
     };
-    constexpr _drop_exactly _drop::exactly;
-    constexpr _drop_at_most _drop::at_most;
-    constexpr _drop drop{};
+    template <typename ...Dummy>
+    constexpr _drop_exactly const& _drop<Dummy...>::exactly;
+    template <typename ...Dummy>
+    constexpr _drop_at_most const& _drop<Dummy...>::at_most;
+
+    namespace {
+        constexpr auto const& drop = detail::static_constexpr<_drop<>>;
+    }
 #endif
 
     //! Equivalent to `drop`; provided for convenience.
@@ -542,8 +561,10 @@ namespace boost { namespace hana {
     template <detail::std::size_t n>
     struct _drop_c;
 
-    template <detail::std::size_t n>
-    constexpr _drop_c<n> drop_c{};
+    namespace {
+        template <detail::std::size_t n>
+        constexpr auto const& drop_c = detail::static_constexpr<_drop_c<n>>;
+    }
 #endif
 
     //! Drop elements from an iterable up to, but excluding, the first
@@ -593,7 +614,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _drop_while drop_while{};
+    namespace {
+        constexpr auto const& drop_while = detail::static_constexpr<_drop_while>;
+    }
 #endif
 
     //! Drop elements from an iterable up to, but excluding, the first
@@ -648,7 +671,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _drop_until drop_until{};
+    namespace {
+        constexpr auto const& drop_until = detail::static_constexpr<_drop_until>;
+    }
 #endif
 }} // end namespace boost::hana
 

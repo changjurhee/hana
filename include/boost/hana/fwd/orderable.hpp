@@ -12,6 +12,7 @@ Distributed under the Boost Software License, Version 1.0.
 
 #include <boost/hana/config.hpp>
 #include <boost/hana/detail/create.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/fwd/core/datatype.hpp>
 #include <boost/hana/fwd/core/default.hpp>
 #include <boost/hana/fwd/core/models.hpp>
@@ -233,6 +234,12 @@ namespace boost { namespace hana {
     template <typename T, typename U, typename = void>
     struct less_impl;
 
+    struct _less_than {
+        template <typename X>
+        constexpr decltype(auto) operator()(X&& x) const;
+    };
+
+    template <typename ...>
     struct _less {
         template <typename X, typename Y>
         constexpr decltype(auto) operator()(X&& x, Y&& y) const {
@@ -255,15 +262,14 @@ namespace boost { namespace hana {
             return Less::apply(static_cast<X&&>(x), static_cast<Y&&>(y));
         }
 
-        struct _than {
-            template <typename X>
-            constexpr decltype(auto) operator()(X&& x) const;
-        };
-        static constexpr _than than{};
+        static constexpr auto const& than = detail::static_constexpr<_less_than>;
     };
-    constexpr _less::_than _less::than;
+    template <typename ...Dummy>
+    constexpr _less_than const& _less<Dummy...>::than;
 
-    constexpr _less less{};
+    namespace {
+        constexpr auto const& less = detail::static_constexpr<_less<>>;
+    }
 #endif
 
     //! Returns a `Logical` representing whether `x` is less than or
@@ -292,6 +298,12 @@ namespace boost { namespace hana {
     template <typename T, typename U, typename = void>
     struct less_equal_impl;
 
+    struct _less_equal_than {
+        template <typename X>
+        constexpr decltype(auto) operator()(X&& x) const;
+    };
+
+    template <typename ...>
     struct _less_equal {
         template <typename X, typename Y>
         constexpr decltype(auto) operator()(X&& x, Y&& y) const {
@@ -310,15 +322,14 @@ namespace boost { namespace hana {
             return LessEqual::apply(static_cast<X&&>(x), static_cast<Y&&>(y));
         }
 
-        struct _than {
-            template <typename X>
-            constexpr decltype(auto) operator()(X&& x) const;
-        };
-        static constexpr _than than{};
+        static constexpr auto const& than = detail::static_constexpr<_less_equal_than>;
     };
-    constexpr _less_equal::_than _less_equal::than;
+    template <typename ...Dummy>
+    constexpr _less_equal_than const& _less_equal<Dummy...>::than;
 
-    constexpr _less_equal less_equal{};
+    namespace {
+        constexpr auto const& less_equal = detail::static_constexpr<_less_equal<>>;
+    }
 #endif
 
     //! Returns a `Logical` representing whether `x` is greater than `y`.
@@ -346,6 +357,12 @@ namespace boost { namespace hana {
     template <typename T, typename U, typename = void>
     struct greater_impl;
 
+    struct _greater_than {
+        template <typename X>
+        constexpr decltype(auto) operator()(X&& x) const;
+    };
+
+    template <typename ...>
     struct _greater {
         template <typename X, typename Y>
         constexpr decltype(auto) operator()(X&& x, Y&& y) const {
@@ -364,15 +381,14 @@ namespace boost { namespace hana {
             return Greater::apply(static_cast<X&&>(x), static_cast<Y&&>(y));
         }
 
-        struct _than {
-            template <typename X>
-            constexpr decltype(auto) operator()(X&& x) const;
-        };
-        static constexpr _than than{};
+        static constexpr auto const& than = detail::static_constexpr<_greater_than>;
     };
-    constexpr _greater::_than _greater::than;
+    template <typename ...Dummy>
+    constexpr _greater_than const& _greater<Dummy...>::than;
 
-    constexpr _greater greater{};
+    namespace {
+        constexpr auto const& greater = detail::static_constexpr<_greater<>>;
+    }
 #endif
 
     //! Returns a `Logical` representing whether `x` is greater than or
@@ -401,6 +417,12 @@ namespace boost { namespace hana {
     template <typename T, typename U, typename = void>
     struct greater_equal_impl;
 
+    struct _greater_equal_than {
+        template <typename X>
+        constexpr decltype(auto) operator()(X&& x) const;
+    };
+
+    template <typename ...>
     struct _greater_equal {
         template <typename X, typename Y>
         constexpr decltype(auto) operator()(X&& x, Y&& y) const {
@@ -419,15 +441,14 @@ namespace boost { namespace hana {
             return GreaterEqual::apply(static_cast<X&&>(x), static_cast<Y&&>(y));
         }
 
-        struct _than {
-            template <typename X>
-            constexpr decltype(auto) operator()(X&& x) const;
-        };
-        static constexpr _than than{};
+        static constexpr auto const& than = detail::static_constexpr<_greater_equal_than>;
     };
-    constexpr _greater_equal::_than _greater_equal::than;
+    template <typename ...Dummy>
+    constexpr _greater_equal_than const& _greater_equal<Dummy...>::than;
 
-    constexpr _greater_equal greater_equal{};
+    namespace {
+        constexpr auto const& greater_equal = detail::static_constexpr<_greater_equal<>>;
+    }
 #endif
 
     //! Returns the smallest of its arguments according to the `less` ordering.
@@ -473,7 +494,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _min min{};
+    namespace {
+        constexpr auto const& min = detail::static_constexpr<_min>;
+    }
 #endif
 
     //! Returns the greatest of its arguments according to the `less` ordering.
@@ -512,7 +535,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _max max{};
+    namespace {
+        constexpr auto const& max = detail::static_constexpr<_max>;
+    }
 #endif
 
     //! Returns a function performing `less` after applying a transformation
@@ -557,7 +582,9 @@ namespace boost { namespace hana {
     template <typename F>
     struct _ordering;
 
-    constexpr detail::create<_ordering> ordering{};
+    namespace {
+        constexpr auto const& ordering = detail::static_constexpr<detail::create<_ordering>>;
+    }
 #endif
 }} // end namespace boost::hana
 

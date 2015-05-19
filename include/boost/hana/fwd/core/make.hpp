@@ -10,6 +10,9 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_CORE_MAKE_HPP
 #define BOOST_HANA_FWD_CORE_MAKE_HPP
 
+#include <boost/hana/detail/static_constexpr.hpp>
+
+
 namespace boost { namespace hana {
     //! @ingroup group-core
     //! Create an object of the given data type with the given arguments.
@@ -60,8 +63,10 @@ namespace boost { namespace hana {
         }
     };
 
-    template <typename Datatype>
-    constexpr _make<Datatype> make{};
+    namespace {
+        template <typename Datatype>
+        constexpr auto const& make = detail::static_constexpr<_make<Datatype>>;
+    }
 #endif
 }} // end namespace boost::hana
 

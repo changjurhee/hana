@@ -11,6 +11,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_FWD_INTEGRAL_DOMAIN_HPP
 
 #include <boost/hana/config.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/fwd/core/datatype.hpp>
 #include <boost/hana/fwd/core/default.hpp>
 #include <boost/hana/fwd/core/models.hpp>
@@ -172,7 +173,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _quot quot{};
+    namespace {
+        constexpr auto const& quot = detail::static_constexpr<_quot>;
+    }
 #endif
 
     //! Generalized integer remainder.
@@ -233,7 +236,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _rem rem{};
+    namespace {
+        constexpr auto const& rem = detail::static_constexpr<_rem>;
+    }
 #endif
 }} // end namespace boost::hana
 

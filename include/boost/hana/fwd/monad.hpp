@@ -11,6 +11,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_FWD_MONAD_HPP
 
 #include <boost/hana/config.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/fwd/core/datatype.hpp>
 #include <boost/hana/fwd/core/models.hpp>
 
@@ -271,7 +272,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _chain chain{};
+    namespace {
+        constexpr auto const& chain = detail::static_constexpr<_chain>;
+    }
 #endif
 
     //! Collapse two levels of monadic structure into a single level.
@@ -323,7 +326,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _flatten flatten{};
+    namespace {
+        constexpr auto const& flatten = detail::static_constexpr<_flatten>;
+    }
 #endif
 
     //! Composition of monadic functions.
@@ -379,7 +384,9 @@ namespace boost { namespace hana {
         constexpr decltype(auto) operator()(F&& f, G&& g) const;
     };
 
-    constexpr _monadic_compose monadic_compose{};
+    namespace {
+        constexpr auto const& monadic_compose = detail::static_constexpr<_monadic_compose>;
+    }
 #endif
 
     //! Sequentially compose two monadic actions, discarding any value
@@ -425,7 +432,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _then then{};
+    namespace {
+        constexpr auto const& then = detail::static_constexpr<_then>;
+    }
 #endif
 
     //! Tap inside a monadic chain.
@@ -478,8 +487,10 @@ namespace boost { namespace hana {
         { return tap_impl<M>::apply(static_cast<F&&>(f)); }
     };
 
-    template <typename M>
-    constexpr _tap<M> tap{};
+    namespace {
+        template <typename M>
+        constexpr auto const& tap = detail::static_constexpr<_tap<M>>;
+    }
 #endif
 }} // end namespace boost::hana
 

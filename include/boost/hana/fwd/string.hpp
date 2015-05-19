@@ -11,6 +11,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_FWD_STRING_HPP
 
 #include <boost/hana/config.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 
 
 namespace boost { namespace hana {
@@ -96,8 +97,10 @@ namespace boost { namespace hana {
     template <char ...s>
     struct _string;
 
-    template <char ...s>
-    constexpr _string<s...> string{};
+    namespace {
+        template <char ...s>
+        constexpr auto const& string = detail::static_constexpr<_string<s...>>;
+    }
 #endif
 
     //! Create a compile-time string from a string literal `s`.

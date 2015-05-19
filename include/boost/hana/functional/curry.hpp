@@ -107,8 +107,10 @@ namespace boost { namespace hana {
         operator()(F&& f) const { return {static_cast<F&&>(f)}; }
     };
 
-    template <detail::std::size_t n>
-    constexpr _make_curry<n> curry{};
+    namespace {
+        template <detail::std::size_t n>
+        constexpr auto const& curry = detail::static_constexpr<_make_curry<n>>;
+    }
 
     namespace curry_detail {
         template <detail::std::size_t n>
@@ -127,7 +129,7 @@ namespace boost { namespace hana {
             static_assert(sizeof...(x) <= n,
             "too many arguments provided to boost::hana::curry");
             return curry_detail::curry_or_call<n - sizeof...(x)>(
-                partial(f, static_cast<X&&>(x)...)
+                hana::partial(f, static_cast<X&&>(x)...)
             );
         }
 
@@ -137,7 +139,7 @@ namespace boost { namespace hana {
             static_assert(sizeof...(x) <= n,
             "too many arguments provided to boost::hana::curry");
             return curry_detail::curry_or_call<n - sizeof...(x)>(
-                partial(f, static_cast<X&&>(x)...)
+                hana::partial(f, static_cast<X&&>(x)...)
             );
         }
 #endif
@@ -147,7 +149,7 @@ namespace boost { namespace hana {
             static_assert(sizeof...(x) <= n,
             "too many arguments provided to boost::hana::curry");
             return curry_detail::curry_or_call<n - sizeof...(x)>(
-                partial(detail::std::move(f), static_cast<X&&>(x)...)
+                hana::partial(detail::std::move(f), static_cast<X&&>(x)...)
             );
         }
     };

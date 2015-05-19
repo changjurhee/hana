@@ -83,11 +83,23 @@ namespace boost { namespace hana {
     //! Example
     //! -------
     //! @snippet example/set.cpp make_set
+#ifdef BOOST_HANA_DOXYGEN_INVOKED
     constexpr auto make_set = make<Set>;
+#else
+    namespace {
+        constexpr auto const& make_set = make<Set>;
+    }
+#endif
 
     //! Equivalent to `make<Set>`, provided for convenience.
     //! @relates Set
+#ifdef BOOST_HANA_DOXYGEN_INVOKED
     constexpr auto set = make<Set>;
+#else
+    namespace {
+        constexpr auto const& set = make<Set>;
+    }
+#endif
 
     //! Insert an element in a `Set`.
     //! @relates Set

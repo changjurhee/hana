@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_LAZY_HPP
 #define BOOST_HANA_FWD_LAZY_HPP
 
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/fwd/core/datatype.hpp>
 
 
@@ -117,7 +118,9 @@ namespace boost { namespace hana {
         constexpr auto operator()(X&& x) const;
     };
 
-    constexpr _lazy lazy{};
+    namespace {
+        constexpr auto const& lazy = detail::static_constexpr<_lazy>;
+    }
 #endif
 }} // end namespace boost::hana
 

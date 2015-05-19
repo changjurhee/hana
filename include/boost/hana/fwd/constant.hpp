@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_CONSTANT_HPP
 #define BOOST_HANA_FWD_CONSTANT_HPP
 
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/fwd/core/datatype.hpp>
 
 
@@ -278,7 +279,9 @@ namespace boost { namespace hana {
         { return value<T>(); }
     };
 
-    constexpr _value_of value_of{};
+    namespace {
+        constexpr auto const& value_of = detail::static_constexpr<_value_of>;
+    }
 #endif
 }} // end namespace boost::hana
 

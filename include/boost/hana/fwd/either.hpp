@@ -10,6 +10,9 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_EITHER_HPP
 #define BOOST_HANA_FWD_EITHER_HPP
 
+#include <boost/hana/detail/static_constexpr.hpp>
+
+
 namespace boost { namespace hana {
     //! @ingroup group-datatypes
     //! Represents a value with two possibilities.
@@ -120,7 +123,9 @@ namespace boost { namespace hana {
         constexpr auto operator()(T&&) const;
     };
 
-    constexpr _make_left left{};
+    namespace {
+        constexpr auto const& left = detail::static_constexpr<_make_left>;
+    }
 #endif
 
     //! Create an `Either` containing the given right value.
@@ -143,7 +148,9 @@ namespace boost { namespace hana {
         constexpr auto operator()(T&&) const;
     };
 
-    constexpr _make_right right{};
+    namespace {
+        constexpr auto const& right = detail::static_constexpr<_make_right>;
+    }
 #endif
 
     //! Apply one of two functions to the value inside an `Either`.
@@ -187,7 +194,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _either either{};
+    namespace {
+        constexpr auto const& either = detail::static_constexpr<_either>;
+    }
 #endif
 }} // end namespace boost::hana
 

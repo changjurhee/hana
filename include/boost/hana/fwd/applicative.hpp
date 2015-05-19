@@ -11,6 +11,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_FWD_APPLICATIVE_HPP
 
 #include <boost/hana/config.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/fwd/core/models.hpp>
 
 
@@ -177,7 +178,9 @@ namespace boost { namespace hana {
         constexpr decltype(auto) operator()(F&& f, Xs&& ...xs) const;
     };
 
-    constexpr _ap ap{};
+    namespace {
+        constexpr auto const& ap = detail::static_constexpr<_ap>;
+    }
 #endif
 
     //! Lift a value into an `Applicative` structure.
@@ -226,8 +229,10 @@ namespace boost { namespace hana {
         }
     };
 
-    template <typename A>
-    constexpr _lift<A> lift{};
+    namespace {
+        template <typename A>
+        constexpr auto const& lift = detail::static_constexpr<_lift<A>>;
+    }
 #endif
 }} // end namespace boost::hana
 

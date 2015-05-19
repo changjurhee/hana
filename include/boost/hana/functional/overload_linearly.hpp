@@ -10,6 +10,7 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FUNCTIONAL_OVERLOAD_LINEARLY_HPP
 #define BOOST_HANA_FUNCTIONAL_OVERLOAD_LINEARLY_HPP
 
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/detail/std/decay.hpp>
 #include <boost/hana/detail/std/declval.hpp>
 
@@ -96,7 +97,10 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _make_overload_linearly overload_linearly{};
+    namespace {
+        constexpr auto const& overload_linearly =
+                            detail::static_constexpr<_make_overload_linearly>;
+    }
 #endif
 }} // end namespace boost::hana
 

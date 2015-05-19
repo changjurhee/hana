@@ -10,6 +10,9 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FUNCTIONAL_APPLY_HPP
 #define BOOST_HANA_FUNCTIONAL_APPLY_HPP
 
+#include <boost/hana/detail/static_constexpr.hpp>
+
+
 namespace boost { namespace hana {
     //! @ingroup group-functional
     //! Invoke `f` with `x...` as arguments.
@@ -40,7 +43,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _apply apply{};
+    namespace {
+        constexpr auto const& apply = detail::static_constexpr<_apply>;
+    }
 #endif
 }} // end namespace boost::hana
 

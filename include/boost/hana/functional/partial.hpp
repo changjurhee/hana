@@ -13,6 +13,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/config.hpp>
 #include <boost/hana/detail/closure.hpp>
 #include <boost/hana/detail/create.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/detail/std/move.hpp>
 
 
@@ -82,7 +83,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _make_partial partial{};
+    namespace {
+        constexpr auto const& partial = detail::static_constexpr<_make_partial>;
+    }
 #endif
 }} // end namespace boost::hana
 

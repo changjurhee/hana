@@ -11,6 +11,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_FWD_COMONAD_HPP
 
 #include <boost/hana/config.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/fwd/core/datatype.hpp>
 #include <boost/hana/fwd/core/models.hpp>
 
@@ -144,7 +145,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _extract extract{};
+    namespace {
+        constexpr auto const& extract = detail::static_constexpr<_extract>;
+    }
 #endif
 
     //! Add an extra layer of comonadic context to a comonadic value.
@@ -190,7 +193,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _duplicate duplicate{};
+    namespace {
+        constexpr auto const& duplicate = detail::static_constexpr<_duplicate>;
+    }
 #endif
 
     //! Comonadic application of a function to a comonadic value.
@@ -242,7 +247,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _extend extend{};
+    namespace {
+        constexpr auto const& extend = detail::static_constexpr<_extend>;
+    }
 #endif
 }} // end namespace boost::hana
 

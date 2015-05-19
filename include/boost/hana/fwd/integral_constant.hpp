@@ -10,8 +10,9 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef BOOST_HANA_FWD_INTEGRAL_CONSTANT_HPP
 #define BOOST_HANA_FWD_INTEGRAL_CONSTANT_HPP
 
-#include <boost/hana/fwd/core/operators.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/detail/std/size_t.hpp>
+#include <boost/hana/fwd/core/operators.hpp>
 
 
 namespace boost { namespace hana {
@@ -213,6 +214,7 @@ namespace boost { namespace hana {
     template <detail::std::size_t i>
     using _size_t = _integral_constant<detail::std::size_t, i>;
 
+#ifdef BOOST_HANA_DOXYGEN_INVOKED
     //! Creates an `IntegralConstant` holding the given compile-time value.
     //! @relates IntegralConstant
     //!
@@ -285,6 +287,59 @@ namespace boost { namespace hana {
     //! @relates IntegralConstant
     template <detail::std::size_t i>
     constexpr _integral_constant<detail::std::size_t, i> size_t{};
+#else
+    namespace {
+        template <typename T, T v>
+        constexpr auto const& integral_constant =
+            detail::static_constexpr<_integral_constant<T, v>>;
+
+        template <bool b>
+        constexpr auto const& bool_ = detail::static_constexpr<_bool<b>>;
+
+        constexpr auto const& true_ = bool_<true>;
+        constexpr auto const& false_ = bool_<false>;
+
+        template <char c>
+        constexpr auto const& char_ =
+            detail::static_constexpr<_integral_constant<char, c>>;
+
+        template <short i>
+        constexpr auto const& short_ =
+            detail::static_constexpr<_integral_constant<short, i>>;
+
+        template <unsigned short i>
+        constexpr auto const& ushort =
+            detail::static_constexpr<_integral_constant<unsigned short, i>>;
+
+        template <int i>
+        constexpr auto const& int_ =
+            detail::static_constexpr<_integral_constant<int, i>>;
+
+        template <unsigned int i>
+        constexpr auto const& uint =
+            detail::static_constexpr<_integral_constant<unsigned int, i>>;
+
+        template <long i>
+        constexpr auto const& long_ =
+            detail::static_constexpr<_integral_constant<long, i>>;
+
+        template <unsigned long i>
+        constexpr auto const& ulong =
+            detail::static_constexpr<_integral_constant<unsigned long, i>>;
+
+        template <long long i>
+        constexpr auto const& llong =
+            detail::static_constexpr<_integral_constant<long long, i>>;
+
+        template <unsigned long long i>
+        constexpr auto const& ullong =
+            detail::static_constexpr<_integral_constant<unsigned long long, i>>;
+
+        template <detail::std::size_t i>
+        constexpr auto const& size_t =
+            detail::static_constexpr<_integral_constant<detail::std::size_t, i>>;
+    }
+#endif
 
     namespace literals {
         //! Creates an `IntegralConstant` from a literal.

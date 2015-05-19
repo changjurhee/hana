@@ -11,6 +11,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_FWD_RANGE_HPP
 
 #include <boost/hana/config.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/fwd/core/make.hpp>
 #include <boost/hana/fwd/integral_constant.hpp>
 
@@ -89,7 +90,13 @@ namespace boost { namespace hana {
 
     //! Alias to `make<Range>`; provided for convenience.
     //! @relates Range
+#ifdef BOOST_HANA_DOXYGEN_INVOKED
     constexpr auto make_range = make<Range>;
+#else
+    namespace {
+        constexpr auto const& make_range = make<Range>;
+    }
+#endif
 
     //! @todo
     //! Right now, this is provided for backwards compatibility.
@@ -97,7 +104,13 @@ namespace boost { namespace hana {
     //! well-thought naming pattern for all the other objects in Hana,
     //! because `range(from, to)` is awesome; much better than
     //! `make_range(from, to)`.
-    constexpr auto range = make<Range>;
+    #ifdef BOOST_HANA_DOXYGEN_INVOKED
+        constexpr auto range = make<Range>;
+    #else
+        namespace {
+            constexpr auto const& range = make<Range>;
+        }
+    #endif
 
     //! Shorthand to create a `Range` of `Constant`s.
     //! @relates Range
@@ -128,10 +141,12 @@ namespace boost { namespace hana {
     constexpr auto range_c = make<Range>(integral_constant<T, from>,
                                          integral_constant<T, to>);
 #else
-    template <typename T, T from, T to>
-    constexpr decltype(
-        make<Range>(integral_constant<T, from>, integral_constant<T, to>)
-    ) range_c{};
+    namespace {
+        template <typename T, T from, T to>
+        constexpr auto const& range_c = detail::static_constexpr<
+            _range<IntegralConstant<T>, from, to>
+        >;
+    }
 #endif
 }} // end namespace boost::hana
 

@@ -76,7 +76,14 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr auto on = infix(detail::create<_on>{});
+    namespace detail {
+        template <typename ...>
+        constexpr auto on_v = infix(detail::create<_on>{});
+    }
+
+    namespace {
+        constexpr auto const& on = detail::on_v<>;
+    }
 #endif
 }} // end namespace boost::hana
 

@@ -320,6 +320,24 @@ namespace boost { namespace hana {
     };
 
     //////////////////////////////////////////////////////////////////////////
+    // reverse_fold
+    //////////////////////////////////////////////////////////////////////////
+    //! @cond
+    template <typename Xs, typename S, typename F>
+    constexpr decltype(auto) _reverse_fold::operator()(Xs&& xs, S&& s, F&& f) const {
+        return hana::fold.right(static_cast<Xs&&>(xs),
+                                static_cast<S&&>(s),
+                                hana::flip(static_cast<F&&>(f)));
+    }
+
+    template <typename Xs, typename F>
+    constexpr decltype(auto) _reverse_fold::operator()(Xs&& xs, F&& f) const {
+        return hana::fold.right(static_cast<Xs&&>(xs),
+                                hana::flip(static_cast<F&&>(f)));
+    }
+    //! @endcond
+
+    //////////////////////////////////////////////////////////////////////////
     // for_each
     //////////////////////////////////////////////////////////////////////////
     template <typename T, typename>
@@ -682,6 +700,15 @@ namespace boost { namespace hana {
             )();
         }
     };
+
+    //////////////////////////////////////////////////////////////////////////
+    // fuse
+    //////////////////////////////////////////////////////////////////////////
+    //! @cond
+    template <typename F>
+    constexpr decltype(auto) _fuse::operator()(F&& f) const
+    { return hana::partial(hana::flip(hana::unpack), static_cast<F&&>(f)); }
+    //! @endcond
 
     //////////////////////////////////////////////////////////////////////////
     // models

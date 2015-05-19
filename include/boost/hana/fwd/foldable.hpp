@@ -11,8 +11,7 @@ Distributed under the Boost Software License, Version 1.0.
 #define BOOST_HANA_FWD_FOLDABLE_HPP
 
 #include <boost/hana/config.hpp>
-#include <boost/hana/functional/curry.hpp>
-#include <boost/hana/functional/flip.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/fwd/core/datatype.hpp>
 #include <boost/hana/fwd/core/models.hpp>
 #include <boost/hana/fwd/integral_constant.hpp>
@@ -280,65 +279,76 @@ namespace boost { namespace hana {
     struct _fold_left {
         template <typename Xs, typename State, typename F>
         constexpr decltype(auto) operator()(Xs&& xs, State&& state, F&& f) const {
+            using S = typename datatype<Xs>::type;
+            using FoldLeft = fold_left_impl<S>;
+
         #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
-            static_assert(_models<Foldable, typename datatype<Xs>::type>{},
+            static_assert(_models<Foldable, S>{},
             "hana::fold.left(xs, state, f) requires xs to be Foldable");
         #endif
-            return fold_left_impl<typename datatype<Xs>::type>::apply(
-                static_cast<Xs&&>(xs),
-                static_cast<State&&>(state),
-                static_cast<F&&>(f)
-            );
+
+            return FoldLeft::apply(static_cast<Xs&&>(xs),
+                                   static_cast<State&&>(state),
+                                   static_cast<F&&>(f));
         }
 
         template <typename Xs, typename F>
         constexpr decltype(auto) operator()(Xs&& xs, F&& f) const {
+            using S = typename datatype<Xs>::type;
+            using FoldLeft = fold_left_nostate_impl<S>;
+
         #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
-            static_assert(_models<Foldable, typename datatype<Xs>::type>{},
+            static_assert(_models<Foldable, S>{},
             "hana::fold.left(xs, f) requires xs to be Foldable");
         #endif
-            return fold_left_nostate_impl<typename datatype<Xs>::type>::apply(
-                static_cast<Xs&&>(xs),
-                static_cast<F&&>(f)
-            );
+
+            return FoldLeft::apply(static_cast<Xs&&>(xs), static_cast<F&&>(f));
         }
     };
 
     struct _fold_right {
         template <typename Xs, typename State, typename F>
         constexpr decltype(auto) operator()(Xs&& xs, State&& state, F&& f) const {
+            using S = typename datatype<Xs>::type;
+            using FoldRight = fold_right_impl<S>;
+
         #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
-            static_assert(_models<Foldable, typename datatype<Xs>::type>{},
+            static_assert(_models<Foldable, S>{},
             "hana::fold.right(xs, state, f) requires xs to be Foldable");
         #endif
-            return fold_right_impl<typename datatype<Xs>::type>::apply(
-                static_cast<Xs&&>(xs),
-                static_cast<State&&>(state),
-                static_cast<F&&>(f)
-            );
+
+            return FoldRight::apply(static_cast<Xs&&>(xs),
+                                    static_cast<State&&>(state),
+                                    static_cast<F&&>(f));
         }
 
         template <typename Xs, typename F>
         constexpr decltype(auto) operator()(Xs&& xs, F&& f) const {
+            using S = typename datatype<Xs>::type;
+            using FoldRight = fold_right_nostate_impl<S>;
+
         #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
-            static_assert(_models<Foldable, typename datatype<Xs>::type>{},
+            static_assert(_models<Foldable, S>{},
             "hana::fold.right(xs, f) requires xs to be Foldable");
         #endif
-            return fold_right_nostate_impl<typename datatype<Xs>::type>::apply(
-                static_cast<Xs&&>(xs),
-                static_cast<F&&>(f)
-            );
+
+            return FoldRight::apply(static_cast<Xs&&>(xs), static_cast<F&&>(f));
         }
     };
 
+    template <typename ...>
     struct _fold : _fold_left {
-        static constexpr _fold_left left{};
-        static constexpr _fold_right right{};
+        static constexpr auto const& left = detail::static_constexpr<_fold_left>;
+        static constexpr auto const& right = detail::static_constexpr<_fold_right>;
     };
-    constexpr _fold_left _fold::left;
-    constexpr _fold_right _fold::right;
+    template <typename ...Dummy>
+    constexpr _fold_left const& _fold<Dummy...>::left;
+    template <typename ...Dummy>
+    constexpr _fold_right const& _fold<Dummy...>::right;
 
-    constexpr _fold fold{};
+    namespace {
+        constexpr auto const& fold = detail::static_constexpr<_fold<>>;
+    }
 #endif
 
     //! Monadic fold of a structure with a binary operation and an optional
@@ -528,29 +538,31 @@ namespace boost { namespace hana {
     struct _monadic_fold_left {
         template <typename Xs, typename State, typename F>
         constexpr decltype(auto) operator()(Xs&& xs, State&& state, F&& f) const {
+            using S = typename datatype<Xs>::type;
+            using MonadicFold = monadic_fold_left_impl<S>;
+
         #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
-            static_assert(_models<Foldable, typename datatype<Xs>::type>{},
+            static_assert(_models<Foldable, S>{},
             "hana::monadic_fold<M>.left(xs, state, f) requires xs to be Foldable");
         #endif
-            return monadic_fold_left_impl<typename datatype<Xs>::type>::
-                template apply<M>(
-                    static_cast<Xs&&>(xs),
-                    static_cast<State&&>(state),
-                    static_cast<F&&>(f)
-                );
+
+            return MonadicFold::template apply<M>(static_cast<Xs&&>(xs),
+                                                  static_cast<State&&>(state),
+                                                  static_cast<F&&>(f));
         }
 
         template <typename Xs, typename F>
         constexpr decltype(auto) operator()(Xs&& xs, F&& f) const {
+            using S = typename datatype<Xs>::type;
+            using MonadicFold = monadic_fold_left_nostate_impl<S>;
+
         #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
-            static_assert(_models<Foldable, typename datatype<Xs>::type>{},
+            static_assert(_models<Foldable, S>{},
             "hana::monadic_fold<M>.left(xs, f) requires xs to be Foldable");
         #endif
-            return monadic_fold_left_nostate_impl<typename datatype<Xs>::type>::
-                template apply<M>(
-                    static_cast<Xs&&>(xs),
-                    static_cast<F&&>(f)
-                );
+
+            return MonadicFold::template apply<M>(static_cast<Xs&&>(xs),
+                                                  static_cast<F&&>(f));
         }
     };
 
@@ -558,48 +570,56 @@ namespace boost { namespace hana {
     struct _monadic_fold_right {
         template <typename Xs, typename State, typename F>
         constexpr decltype(auto) operator()(Xs&& xs, State&& state, F&& f) const {
+            using S = typename datatype<Xs>::type;
+            using MonadicFold = monadic_fold_right_impl<S>;
+
         #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
-            static_assert(_models<Foldable, typename datatype<Xs>::type>{},
+            static_assert(_models<Foldable, S>{},
             "hana::monadic_fold<M>.right(xs, state, f) requires xs to be Foldable");
         #endif
-            return monadic_fold_right_impl<typename datatype<Xs>::type>::
-                template apply<M>(
-                    static_cast<Xs&&>(xs),
-                    static_cast<State&&>(state),
-                    static_cast<F&&>(f)
-                );
+
+            return MonadicFold::template apply<M>(static_cast<Xs&&>(xs),
+                                                  static_cast<State&&>(state),
+                                                  static_cast<F&&>(f));
         }
 
         template <typename Xs, typename F>
         constexpr decltype(auto) operator()(Xs&& xs, F&& f) const {
+            using S = typename datatype<Xs>::type;
+            using MonadicFold = monadic_fold_right_nostate_impl<S>;
+
         #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
-            static_assert(_models<Foldable, typename datatype<Xs>::type>{},
+            static_assert(_models<Foldable, S>{},
             "hana::monadic_fold<M>.right(xs, f) requires xs to be Foldable");
         #endif
-            return monadic_fold_right_nostate_impl<typename datatype<Xs>::type>::
-                template apply<M>(
-                    static_cast<Xs&&>(xs),
-                    static_cast<F&&>(f)
-                );
+
+            return MonadicFold::template apply<M>(static_cast<Xs&&>(xs),
+                                                  static_cast<F&&>(f));
         }
     };
 
     template <typename M>
     struct _monadic_fold : _monadic_fold_left<M> {
+
     #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
         static_assert(_models<Monad, M>{},
         "hana::monadic_fold<M> requires M to be a Monad");
     #endif
-        static constexpr _monadic_fold_left<M> left{};
-        static constexpr _monadic_fold_right<M> right{};
+
+        static constexpr _monadic_fold_left<M> const& left
+                        = detail::static_constexpr<_monadic_fold_left<M>>;
+        static constexpr _monadic_fold_right<M> const& right
+                        = detail::static_constexpr<_monadic_fold_right<M>>;
     };
     template <typename M>
-    constexpr _monadic_fold_left<M> _monadic_fold<M>::left;
+    constexpr _monadic_fold_left<M> const& _monadic_fold<M>::left;
     template <typename M>
-    constexpr _monadic_fold_right<M> _monadic_fold<M>::right;
+    constexpr _monadic_fold_right<M> const& _monadic_fold<M>::right;
 
-    template <typename M>
-    constexpr _monadic_fold<M> monadic_fold{};
+    namespace {
+        template <typename M>
+        constexpr auto const& monadic_fold = detail::static_constexpr<_monadic_fold<M>>;
+    }
 #endif
 
     //! Equivalent to `reverse_fold` in Boost.Fusion and Boost.MPL.
@@ -632,20 +652,15 @@ namespace boost { namespace hana {
 #else
     struct _reverse_fold {
         template <typename Xs, typename S, typename F>
-        constexpr decltype(auto) operator()(Xs&& xs, S&& s, F&& f) const {
-            return hana::fold.right(static_cast<Xs&&>(xs),
-                                    static_cast<S&&>(s),
-                                    hana::flip(static_cast<F&&>(f)));
-        }
+        constexpr decltype(auto) operator()(Xs&& xs, S&& s, F&& f) const;
 
         template <typename Xs, typename F>
-        constexpr decltype(auto) operator()(Xs&& xs, F&& f) const {
-            return hana::fold.right(static_cast<Xs&&>(xs),
-                                    hana::flip(static_cast<F&&>(f)));
-        }
+        constexpr decltype(auto) operator()(Xs&& xs, F&& f) const;
     };
 
-    constexpr _reverse_fold reverse_fold{};
+    namespace {
+        constexpr auto const& reverse_fold = detail::static_constexpr<_reverse_fold>;
+    }
 #endif
 
     //! Perform an action on each element of a foldable, discarding
@@ -679,18 +694,21 @@ namespace boost { namespace hana {
     struct _for_each {
         template <typename Xs, typename F>
         constexpr decltype(auto) operator()(Xs&& xs, F&& f) const {
-#ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
-            static_assert(_models<Foldable, typename datatype<Xs>::type>{},
+            using S = typename datatype<Xs>::type;
+            using ForEach = for_each_impl<S>;
+
+        #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
+            static_assert(_models<Foldable, S>{},
             "hana::for_each(xs, f) requires xs to be Foldable");
-#endif
-            return for_each_impl<typename datatype<Xs>::type>::apply(
-                static_cast<Xs&&>(xs),
-                static_cast<F&&>(f)
-            );
+        #endif
+
+            return ForEach::apply(static_cast<Xs&&>(xs), static_cast<F&&>(f));
         }
     };
 
-    constexpr _for_each for_each{};
+    namespace {
+        constexpr auto const& for_each = detail::static_constexpr<_for_each>;
+    }
 #endif
 
     //! Return the number of elements in a finite structure.
@@ -716,17 +734,21 @@ namespace boost { namespace hana {
     struct _length {
         template <typename Xs>
         constexpr decltype(auto) operator()(Xs&& xs) const {
+            using S = typename datatype<Xs>::type;
+            using Length = length_impl<S>;
+
         #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
-            static_assert(_models<Foldable, typename datatype<Xs>::type>{},
+            static_assert(_models<Foldable, S>{},
             "hana::length(xs) requires xs to be Foldable");
         #endif
-            return length_impl<typename datatype<Xs>::type>::apply(
-                static_cast<Xs&&>(xs)
-            );
+
+            return Length::apply(static_cast<Xs&&>(xs));
         }
     };
 
-    constexpr _length length{};
+    namespace {
+        constexpr auto const& length = detail::static_constexpr<_length>;
+    }
 #endif
 
     //! Equivalent to `length`; provided for consistency with the
@@ -741,7 +763,13 @@ namespace boost { namespace hana {
     //! Example
     //! -------
     //! @snippet example/foldable.cpp size
+#ifdef BOOST_HANA_DOXYGEN_INVOKED
     constexpr auto size = length;
+#else
+    namespace {
+        constexpr auto const& size = length;
+    }
+#endif
 
     //! Return the least element of a non-empty structure with respect to
     //! a `predicate`, by default `less`.
@@ -833,35 +861,43 @@ namespace boost { namespace hana {
         constexpr decltype(auto) operator()(Predicate&&) const;
     };
 
+    template <typename ...>
     struct _minimum {
         template <typename Xs>
         constexpr decltype(auto) operator()(Xs&& xs) const {
+            using S = typename datatype<Xs>::type;
+            using Minimum = minimum_impl<S>;
+
         #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
-            static_assert(_models<Foldable, typename datatype<Xs>::type>{},
+            static_assert(_models<Foldable, S>{},
             "hana::minimum(xs) requires xs to be Foldable");
         #endif
-            return minimum_impl<typename datatype<Xs>::type>::apply(
-                static_cast<Xs&&>(xs)
-            );
+
+            return Minimum::apply(static_cast<Xs&&>(xs));
         }
 
         template <typename Xs, typename Predicate>
         constexpr decltype(auto) operator()(Xs&& xs, Predicate&& pred) const {
+            using S = typename datatype<Xs>::type;
+            using Minimum = minimum_pred_impl<S>;
+
         #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
-            static_assert(_models<Foldable, typename datatype<Xs>::type>{},
+            static_assert(_models<Foldable, S>{},
             "hana::minimum(xs, predicate) requires xs to be Foldable");
         #endif
-            return minimum_pred_impl<typename datatype<Xs>::type>::apply(
-                static_cast<Xs&&>(xs),
-                static_cast<Predicate&&>(pred)
-            );
+
+            return Minimum::apply(static_cast<Xs&&>(xs),
+                                  static_cast<Predicate&&>(pred));
         }
 
-        static constexpr _minimum_by by{};
+        static constexpr auto const& by = detail::static_constexpr<_minimum_by>;
     };
-    constexpr _minimum_by _minimum::by;
+    template <typename ...Dummy>
+    constexpr _minimum_by const& _minimum<Dummy...>::by;
 
-    constexpr _minimum minimum{};
+    namespace {
+        constexpr auto const& minimum = detail::static_constexpr<_minimum<>>;
+    }
 #endif
 
     //! Return the greatest element of a non-empty structure with respect to
@@ -954,35 +990,43 @@ namespace boost { namespace hana {
         constexpr decltype(auto) operator()(Predicate&&) const;
     };
 
+    template <typename ...>
     struct _maximum {
         template <typename Xs>
         constexpr decltype(auto) operator()(Xs&& xs) const {
+            using S = typename datatype<Xs>::type;
+            using Maximum = maximum_impl<S>;
+
         #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
-            static_assert(_models<Foldable, typename datatype<Xs>::type>{},
+            static_assert(_models<Foldable, S>{},
             "hana::maximum(xs) requires xs to be Foldable");
         #endif
-            return maximum_impl<typename datatype<Xs>::type>::apply(
-                static_cast<Xs&&>(xs)
-            );
+
+            return Maximum::apply(static_cast<Xs&&>(xs));
         }
 
         template <typename Xs, typename Predicate>
         constexpr decltype(auto) operator()(Xs&& xs, Predicate&& pred) const {
+            using S = typename datatype<Xs>::type;
+            using Maximum = maximum_pred_impl<S>;
+
         #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
-            static_assert(_models<Foldable, typename datatype<Xs>::type>{},
+            static_assert(_models<Foldable, S>{},
             "hana::maximum(xs, predicate) requires xs to be Foldable");
         #endif
-            return maximum_pred_impl<typename datatype<Xs>::type>::apply(
-                static_cast<Xs&&>(xs),
-                static_cast<Predicate&&>(pred)
-            );
+
+            return Maximum::apply(static_cast<Xs&&>(xs),
+                                  static_cast<Predicate&&>(pred));
         }
 
-        static constexpr _maximum_by by{};
+        static constexpr auto const& by = detail::static_constexpr<_maximum_by>;
     };
-    constexpr _maximum_by _maximum::by;
+    template <typename ...Dummy>
+    constexpr _maximum_by const& _maximum<Dummy...>::by;
 
-    constexpr _maximum maximum{};
+    namespace {
+        constexpr auto const& maximum = detail::static_constexpr<_maximum<>>;
+    }
 #endif
 
     //! Compute the sum of the numbers of a structure.
@@ -1044,18 +1088,22 @@ namespace boost { namespace hana {
 
         template <typename Xs>
         constexpr decltype(auto) operator()(Xs&& xs) const {
+            using S = typename datatype<Xs>::type;
+            using Sum = sum_impl<S>;
+
         #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
-            static_assert(_models<Foldable, typename datatype<Xs>::type>{},
+            static_assert(_models<Foldable, S>{},
             "hana::sum<M>(xs) requires xs to be Foldable");
         #endif
-            return sum_impl<typename datatype<Xs>::type>::template apply<M>(
-                static_cast<Xs&&>(xs)
-            );
+
+            return Sum::template apply<M>(static_cast<Xs&&>(xs));
         }
     };
 
-    template <typename M = IntegralConstant<int>>
-    constexpr _sum<M> sum{};
+    namespace {
+        template <typename M = IntegralConstant<int>>
+        constexpr auto const& sum = detail::static_constexpr<_sum<M>>;
+    }
 #endif
 
     //! Compute the product of the numbers of a structure.
@@ -1120,18 +1168,22 @@ namespace boost { namespace hana {
 
         template <typename Xs>
         constexpr decltype(auto) operator()(Xs&& xs) const {
-#ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
-            static_assert(_models<Foldable, typename datatype<Xs>::type>{},
+            using S = typename datatype<Xs>::type;
+            using Product = product_impl<S>;
+
+        #ifdef BOOST_HANA_CONFIG_CHECK_DATA_TYPES
+            static_assert(_models<Foldable, S>{},
             "hana::product<R>(xs) requires xs to be Foldable");
-#endif
-            return product_impl<typename datatype<Xs>::type>::template apply<R>(
-                static_cast<Xs&&>(xs)
-            );
+        #endif
+
+            return Product::template apply<R>(static_cast<Xs&&>(xs));
         }
     };
 
-    template <typename R = IntegralConstant<int>>
-    constexpr _product<R> product{};
+    namespace {
+        template <typename R = IntegralConstant<int>>
+        constexpr auto const& product = detail::static_constexpr<_product<R>>;
+    }
 #endif
 
     //! Return the number of elements in the structure for which the
@@ -1184,7 +1236,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _count_if count_if{};
+    namespace {
+        constexpr auto const& count_if = detail::static_constexpr<_count_if>;
+    }
 #endif
 
     //! Return the number of elements in the structure that compare equal to
@@ -1231,7 +1285,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _count count{};
+    namespace {
+        constexpr auto const& count = detail::static_constexpr<_count>;
+    }
 #endif
 
     //! Invoke a function with the elements of a structure as arguments.
@@ -1283,7 +1339,9 @@ namespace boost { namespace hana {
         }
     };
 
-    constexpr _unpack unpack{};
+    namespace {
+        constexpr auto const& unpack = detail::static_constexpr<_unpack>;
+    }
 #endif
 
     //! Transform a function taking multiple arguments into a function that
@@ -1315,7 +1373,14 @@ namespace boost { namespace hana {
         };
     };
 #else
-    constexpr auto fuse = curry<2>(flip(unpack));
+    struct _fuse {
+        template <typename F>
+        constexpr decltype(auto) operator()(F&& f) const;
+    };
+
+    namespace {
+        constexpr auto const& fuse = detail::static_constexpr<_fuse>;
+    }
 #endif
 }} // end namespace boost::hana
 

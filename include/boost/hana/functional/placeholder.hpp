@@ -13,6 +13,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/config.hpp>
 #include <boost/hana/detail/closure.hpp>
 #include <boost/hana/detail/create.hpp>
+#include <boost/hana/detail/static_constexpr.hpp>
 #include <boost/hana/detail/std/declval.hpp>
 #include <boost/hana/detail/std/move.hpp>
 
@@ -253,7 +254,10 @@ namespace boost { namespace hana {
 #undef BOOST_HANA_IMPL_CONST_OVERLOAD
     } // end namespace placeholder_detail
 
-    constexpr placeholder_detail::placeholder _{};
+    namespace {
+        constexpr auto const& _ =
+                    detail::static_constexpr<placeholder_detail::placeholder>;
+    }
 #endif
 }} // end namespace boost::hana
 
