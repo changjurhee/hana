@@ -263,21 +263,17 @@ namespace boost { namespace hana {
     //!
     //! `sizeof_` is somewhat equivalent to `sizeof` in that it returns the
     //! size of an expression or type, but it takes an arbitrary expression
-    //! or a Type object and returns its size as an IntegralConstant.
+    //! or a `Type` object and returns its size as an `IntegralConstant`.
     //! Specifically, given an expression `expr`, `sizeof_` satisfies
     //! @code
     //!     sizeof_(expr) == size_t<sizeof(decltype(expr) with references stripped)>
     //! @endcode
     //!
-    //! However, given a Type object, `sizeof_` will simply fetch the size
+    //! However, given a `Type` object, `sizeof_` will simply fetch the size
     //! of the C++ type represented by that object. In other words,
     //! @code
     //!     sizeof_(type<T>) == size_t<sizeof(T)>
     //! @endcode
-    //!
-    //! The behavior of `sizeof_` is consistent with that of `decltype_`.
-    //! In particular, see `decltype_`'s documentation to understand why
-    //! references are always stripped by `sizeof_`.
     //!
     //!
     //! Example

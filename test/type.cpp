@@ -23,6 +23,8 @@ using Function = void();
 void function() { }
 struct undefined { };
 
+struct NestedTemplateXXX { template <typename ...> struct xxx; };
+
 int main() {
     //////////////////////////////////////////////////////////////////////////
     // Type interface and helper functions
@@ -247,23 +249,38 @@ int main() {
 
         // is_valid
         {
+            // Make sure `is_valid` can be used to check for a nested member.
             auto incrementable = is_valid([](auto&& x) -> decltype(++x) { });
             BOOST_HANA_CONSTANT_CHECK(incrementable(1));
             BOOST_HANA_CONSTANT_CHECK(not_(incrementable(undefined{})));
 
-            BOOST_HANA_CONSTANT_CHECK(incrementable(type<int>));
-            BOOST_HANA_CONSTANT_CHECK(not_(incrementable(type<void>)));
-
-            // make sure this can be `static_assert`ed upon even though
+            // Make sure `is_valid` can be `static_assert`ed upon even though
             // `incrementable` and `i` are both non-constexpr.
             int i;
             static_assert(incrementable(i), "");
 
-            // make sure we can use it with non-pods.
+            // Make sure `is_valid` can be used to check for a nested type.
+            // At the same time, we make sure this nested type does not have
+            // to be returnable from functions by making `xxx = char[3]`.
+            struct Foo { using xxx = char[3]; };
+            auto has_xxx_type = is_valid([](auto t) -> _type<
+                typename decltype(t)::type::xxx
+            > { });
+            static_assert(has_xxx_type(type<Foo>), "");
+            static_assert(!has_xxx_type(type<void>), "");
+
+            // Make sure `is_valid` can be used to check for a nested template.
+            auto has_xxx_template = is_valid([](auto t) -> _template<
+                decltype(t)::type::template xxx
+            > { });
+            static_assert(has_xxx_template(type<NestedTemplateXXX>), "");
+            static_assert(!has_xxx_template(type<void>), "");
+
+            // Wake sure we can use `is_valid` with non-pods.
             is_valid(undefined{})(test::Tracked{1});
             is_valid([t = Tracked{1}](auto) { return 1; })(Tracked{1});
 
-            // check is_valid with a nullary function
+            // Make sure `is_valid` works with a nullary function.
             auto f = [](auto ...x) { (void)sizeof...(x); /* -Wunused-param */ };
             auto g = [](auto ...x) -> char(*)[sizeof...(x)] { };
             BOOST_HANA_CONSTANT_CHECK(is_valid(f)());

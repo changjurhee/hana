@@ -55,8 +55,9 @@ int main() {
     // 3. Easily check whether an expression is valid.
     //    This is usually achieved with complex SFINAE-based tricks.
     auto has_name = is_valid([](auto&& x) -> decltype(x.name) { });
-    static_assert(!has_name(type<int>), "");
-    static_assert(has_name(type<Cat>), "");
+    Cat garfield{"Garfield"};
+    static_assert(has_name(garfield), "");
+    static_assert(!has_name(1), "");
 }
 ```
 

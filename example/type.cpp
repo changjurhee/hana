@@ -102,9 +102,6 @@ BOOST_HANA_CONSTANT_CHECK(template_<f>() == type<f<>>);
 BOOST_HANA_CONSTANT_CHECK(template_<f>(type<x>) == type<f<x>>);
 BOOST_HANA_CONSTANT_CHECK(template_<f>(type<x>, type<y>) == type<f<x, y>>);
 
-// calling `template_` on non-Types
-BOOST_HANA_CONSTANT_CHECK(template_<f>(1) == type<f<int>>);
-
 static_assert(std::is_same<
     decltype(template_<f>)::apply<x, y>::type,
     f<x, y>
@@ -122,9 +119,6 @@ BOOST_HANA_CONSTANT_CHECK(metafunction<f>() == type<f<>::type>);
 BOOST_HANA_CONSTANT_CHECK(metafunction<f>(type<x>) == type<f<x>::type>);
 BOOST_HANA_CONSTANT_CHECK(metafunction<f>(type<x>, type<y>) == type<f<x, y>::type>);
 
-// calling `metafunction` on non-Types
-BOOST_HANA_CONSTANT_CHECK(metafunction<f>(1) == type<f<int>::type>);
-
 static_assert(std::is_same<
     decltype(metafunction<f>)::apply<x, y>::type,
     f<x, y>::type
@@ -141,9 +135,6 @@ struct y;
 BOOST_HANA_CONSTANT_CHECK(metafunction_class<f>() == type<f::apply<>::type>);
 BOOST_HANA_CONSTANT_CHECK(metafunction_class<f>(type<x>) == type<f::apply<x>::type>);
 BOOST_HANA_CONSTANT_CHECK(metafunction_class<f>(type<x>, type<y>) == type<f::apply<x, y>::type>);
-
-// calling `metafunction_class` on non-Types
-BOOST_HANA_CONSTANT_CHECK(metafunction_class<f>(1) == type<f::apply<int>::type>);
 
 static_assert(std::is_same<
     decltype(metafunction_class<f>)::apply<x, y>::type,
@@ -193,15 +184,19 @@ int main() {
 {
 
 //! [is_valid]
+// Check for a nested 'name' _member_.
 struct Person { std::string name; };
 auto has_name = is_valid([](auto p) -> decltype(p.name) { });
-
 Person joe{"Joe"};
 static_assert(has_name(joe), "");
 static_assert(!has_name(1), "");
 
-static_assert(has_name(type<Person>), "");
-static_assert(!has_name(type<int>), "");
+
+// Check for a nested 'xxx' _type_.
+struct Foo { using xxx = void; };
+auto has_xxx = is_valid([](auto t) -> typename decltype(t)::type::xxx { });
+static_assert(has_xxx(type<Foo>), "");
+static_assert(!has_xxx(type<int>), "");
 //! [is_valid]
 
 }
