@@ -14,7 +14,6 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/detail/std/size_t.hpp>
 #include <boost/hana/fwd/core/datatype.hpp>
 #include <boost/hana/fwd/core/models.hpp>
-#include <boost/hana/fwd/core/operators.hpp>
 
 
 namespace boost { namespace hana {
@@ -651,13 +650,6 @@ namespace boost { namespace hana {
 
     constexpr _drop_until drop_until{};
 #endif
-
-    namespace operators {
-        template <>
-        struct of<Iterable>
-            : decltype(at)
-        { };
-    }
 }} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_ITERABLE_HPP

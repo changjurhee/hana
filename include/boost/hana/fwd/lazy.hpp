@@ -85,19 +85,7 @@ namespace boost { namespace hana {
         return tag-dispatched;
     };
 #else
-    template <typename T, typename = void>
-    struct eval_impl;
-
-    struct _eval {
-        template <typename Expr>
-        constexpr decltype(auto) operator()(Expr&& expr) const {
-            return eval_impl<typename datatype<Expr>::type>::apply(
-                static_cast<Expr&&>(expr)
-            );
-        }
-    };
-
-    constexpr _eval eval{};
+    // declared in <boost/hana/detail/eval_fwd.hpp>
 #endif
 
     //! Lifts a normal value to a lazy one.

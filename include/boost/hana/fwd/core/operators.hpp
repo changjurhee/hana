@@ -78,12 +78,13 @@ namespace boost { namespace hana {
         //! @ingroup group-core
         //! Controls the operator aliases that are enabled for a data type.
         //!
-        //! Given a data type `T`, `operators::of<T>` should inherit from all
-        //! the methods whose operator aliases are enabled for objects of data
-        //! type `T`. The methods inherited by this trait are checked by
-        //! `has_operator`; if `operators::of<T>` inherits from `decltype(m)`
-        //! for some method `m`, then `has_operator<T, decltype(m)>` will
-        //! be true.
+        //! Given a data type `T`, `operators::of<T>` should inherit from
+        //! `operators::of<decltype(m)>` for all the methods `m` whose
+        //! operator aliases are enabled for objects of data type `T`.
+        //! The `operators::of` inherited by this trait are checked by
+        //! `has_operator`; if `operators::of<T>` inherits from
+        //! `operators::of<decltype(m)>` for some method `m`, then
+        //! `has_operator<T, decltype(m)>` is true.
         //!
         //! However, while explicit specialization of `operators::of` is
         //! possible, another way of customizing this trait is provided.
@@ -94,16 +95,16 @@ namespace boost { namespace hana {
         //!
         //! Also, when a concept `Concept` has methods for which equivalent
         //! operators are provided, `operators::of<Concept>` should be
-        //! specialized so it inherits from all its methods that possess an
-        //! operator equivalent. For example, if `Concept` has methods `m1`,
-        //! `m2` and `m3`, and if `m1` and `m2` have associated operators in
-        //! the `hana::operators` namespace, then `Concept` should specialize
-        //! `operators::of` as follows, or provide an equivalent
-        //! `hana::operators` member type:
+        //! specialized so it inherits from `operators::of<decltype(m)>` for
+        //! all its methods `m` that possess an operator equivalent. For
+        //! example, if `Concept` has methods `m1`, `m2` and `m3`, and if
+        //! `m1` and `m2` have associated operators in the `hana::operators`
+        //! namespace, then `Concept` should specialize `operators::of` as
+        //! follows, or provide an equivalent `hana::operators` member type:
         //! @code
         //!     template <>
         //!     struct operators::of<Concept>
-        //!         : decltype(m1), decltype(m2)
+        //!         : operators::of<decltype(m1)>, operators::of<decltype(m2)>
         //!     { };
         //! @endcode
         //!
@@ -121,7 +122,7 @@ namespace boost { namespace hana {
         //! @code
         //!     template <>
         //!     struct operators::of<T>
-        //!         : decltype(m1), decltype(m2)
+        //!         : operators::of<decltype(m1)>, operators::of<decltype(m2)>
         //!     { };
         //! @endcode
         //!
@@ -129,8 +130,8 @@ namespace boost { namespace hana {
         //! behave as
         //! @code
         //!     template <typename ...Concepts>
-        //!     struct operators
-        //!         : operators<Concepts>...
+        //!     struct operators::of
+        //!         : operators::of<Concepts>...
         //!     { };
         //! @endcode
         //! This makes it possible for a data type `T` to enable the operators
@@ -160,19 +161,18 @@ namespace boost { namespace hana {
         //! from the `operators` namespace explicitly.
         //!
         //! @warning
-        //! If a data type enables the operator for a method or a concept
-        //! that is not implemented or modeled by that data type, the
-        //! behavior is undefined. In particular, one will probably end
-        //! up with a ugly and hard to understand compiler error. The reason
-        //! for that is that some methods like `equal` are defined for objects
-        //! that are `EqualityComparable`, i.e. that can be compared using
-        //! `==`. To do this, `equal` has to test whether the `x == y`
-        //! expression is valid. If a data type enables the `==` operator
-        //! provided by Comparable but does not define the `equal` method,
-        //! and if the `==` operator is accessible through ADL for objects
-        //! of that data type, then `equal` will get caught in the loop when
-        //! trying to check whether `x == y` is a valid expression.
-        //! Bottom line: don't do this.
+        //! If a data type enables the operator for a method or a concept that
+        //! is not implemented or modeled by that data type, the behavior is
+        //! undefined. In particular, one will probably end up with a ugly and
+        //! difficult to understand compiler error. The reason for that is that
+        //! some methods like `equal` are defined for objects that are
+        //! `EqualityComparable`, i.e. that can be compared using `==`. To do
+        //! this, `equal` has to test whether the `x == y` expression is valid.
+        //! If a data type enables the `==` operator provided by Comparable but
+        //! does not define the `equal` method, and if the `==` operator is
+        //! accessible through ADL for objects of that data type, then `equal`
+        //! will get caught in the loop when trying to check whether `x == y`
+        //! is a valid expression. Bottom line: don't do this.
         //!
         //!
         //! Example

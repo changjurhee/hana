@@ -62,6 +62,14 @@ namespace boost { namespace hana {
         >>
         constexpr decltype(auto) operator>=(X&& x, Y&& y)
         { return hana::greater_equal(static_cast<X&&>(x), static_cast<Y&&>(y)); }
+
+        template <>
+        struct of<Orderable>
+            : operators::of<decltype(less)>,
+              operators::of<decltype(less_equal)>,
+              operators::of<decltype(greater)>,
+              operators::of<decltype(greater_equal)>
+        { };
     }
 
     //////////////////////////////////////////////////////////////////////////

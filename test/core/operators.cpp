@@ -15,7 +15,7 @@ constexpr _method method{};
 namespace boost { namespace hana { namespace operators {
     template <>
     struct of<Concept>
-        : decltype(::method)
+        : operators::of<decltype(::method)>
     { };
 }}}
 

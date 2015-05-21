@@ -14,7 +14,6 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/fwd/core/datatype.hpp>
 #include <boost/hana/fwd/core/default.hpp>
 #include <boost/hana/fwd/core/models.hpp>
-#include <boost/hana/fwd/core/operators.hpp>
 
 
 namespace boost { namespace hana {
@@ -204,13 +203,6 @@ namespace boost { namespace hana {
     template <typename M>
     constexpr _zero<M> zero{};
 #endif
-
-    namespace operators {
-        template <>
-        struct of<Monoid>
-            : decltype(plus)
-        { };
-    }
 }} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_MONOID_HPP

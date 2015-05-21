@@ -61,6 +61,11 @@ namespace boost { namespace hana {
                 );
             }
         };
+
+        template <>
+        struct of<Searchable>
+            : operators::of<decltype(at_key)>
+        { };
     }
 
     //////////////////////////////////////////////////////////////////////////

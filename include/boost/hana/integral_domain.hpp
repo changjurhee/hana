@@ -44,6 +44,11 @@ namespace boost { namespace hana {
         >>
         constexpr decltype(auto) operator/(X&& x, Y&& y)
         { return hana::quot(static_cast<X&&>(x), static_cast<Y&&>(y)); }
+
+        template <>
+        struct of<IntegralDomain>
+            : operators::of<decltype(quot)>, operators::of<decltype(rem)>
+        { };
     }
 
     //////////////////////////////////////////////////////////////////////////

@@ -48,6 +48,11 @@ namespace boost { namespace hana {
         >>
         constexpr decltype(auto) operator!=(X&& x, Y&& y)
         { return hana::not_equal(static_cast<X&&>(x), static_cast<Y&&>(y)); }
+
+        template <>
+        struct of<Comparable>
+            : operators::of<decltype(equal)>, operators::of<decltype(not_equal)>
+        { };
     }
 
     //////////////////////////////////////////////////////////////////////////

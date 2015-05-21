@@ -18,10 +18,11 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/core/datatype.hpp>
 #include <boost/hana/core/models.hpp>
 #include <boost/hana/core/operators.hpp>
+#include <boost/hana/detail/dependent_on.hpp>
+#include <boost/hana/detail/eval_base.hpp>
 #include <boost/hana/detail/std/integer_sequence.hpp>
 #include <boost/hana/detail/std/is_integral.hpp>
 #include <boost/hana/detail/std/size_t.hpp>
-#include <boost/hana/lazy.hpp>
 
 // provided models; the rest is included in <boost/hana/integral_constant.hpp>
 #include <boost/hana/logical.hpp>
@@ -91,7 +92,13 @@ namespace boost { namespace hana {
             : operators::of<
                   Comparable, Orderable
                 , Logical
-                , Monoid, Group, Ring, IntegralDomain
+                , Monoid, Group, Ring,
+
+                // We make the operators dependent to avoid instantiating
+                // `operators::of<>` before it is specialized by concepts.
+                // This is required because `bool.hpp` is sometimes included
+                // before concepts are fully defined.
+                detail::dependent_on_t<sizeof(T) == 1, IntegralDomain>
             >
         { };
     }

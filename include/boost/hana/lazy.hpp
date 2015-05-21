@@ -20,6 +20,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/core/operators.hpp>
 #include <boost/hana/core/when.hpp>
 #include <boost/hana/detail/closure.hpp>
+#include <boost/hana/detail/eval_base.hpp>
 #include <boost/hana/detail/std/decay.hpp>
 #include <boost/hana/detail/std/declval.hpp>
 #include <boost/hana/detail/std/move.hpp>
@@ -34,35 +35,14 @@ Distributed under the Boost Software License, Version 1.0.
 
 namespace boost { namespace hana {
     //////////////////////////////////////////////////////////////////////////
-    // eval
+    // Operators
     //////////////////////////////////////////////////////////////////////////
-    template <typename T, typename>
-    struct eval_impl : eval_impl<T, when<true>> { };
-
-    template <typename T, bool condition>
-    struct eval_impl<T, when<condition>> : default_ {
-        template <typename Expr>
-        static constexpr auto eval_helper(Expr&& expr, int)
-            -> decltype(static_cast<Expr&&>(expr)())
-        { return static_cast<Expr&&>(expr)(); }
-
-        template <typename Expr>
-        static constexpr auto eval_helper(Expr&& expr, long)
-            -> decltype(static_cast<Expr&&>(expr)(hana::id))
-        { return static_cast<Expr&&>(expr)(hana::id); }
-
-        template <typename Expr>
-        static constexpr auto eval_helper(Expr&&, ...) {
-            static_assert(detail::wrong<Expr>{},
-            "hana::eval(expr) requires the expression to be Lazy, "
-            "a nullary Callable or a unary Callable that may be "
-            "called with hana::id");
-        }
-
-        template <typename Expr>
-        static constexpr decltype(auto) apply(Expr&& expr)
-        { return eval_helper(static_cast<Expr&&>(expr), int{}); }
-    };
+    namespace operators {
+        template <>
+        struct of<Lazy>
+            : operators::of<Monad>
+        { };
+    }
 
     //////////////////////////////////////////////////////////////////////////
     // lazy
@@ -135,17 +115,7 @@ namespace boost { namespace hana {
     //! @endcond
 
     //////////////////////////////////////////////////////////////////////////
-    // Operators
-    //////////////////////////////////////////////////////////////////////////
-    namespace operators {
-        template <>
-        struct of<Lazy>
-            : operators::of<Monad>
-        { };
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    // eval for Lazy
+    // eval_impl<Lazy>
     //////////////////////////////////////////////////////////////////////////
     template <>
     struct eval_impl<Lazy> {

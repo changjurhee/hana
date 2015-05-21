@@ -14,7 +14,6 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/fwd/core/datatype.hpp>
 #include <boost/hana/fwd/core/default.hpp>
 #include <boost/hana/fwd/core/models.hpp>
-#include <boost/hana/fwd/core/operators.hpp>
 
 
 namespace boost { namespace hana {
@@ -236,13 +235,6 @@ namespace boost { namespace hana {
 
     constexpr _rem rem{};
 #endif
-
-    namespace operators {
-        template <>
-        struct of<IntegralDomain>
-            : decltype(quot), decltype(rem)
-        { };
-    }
 }} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_INTEGRAL_DOMAIN_HPP

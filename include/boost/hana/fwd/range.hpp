@@ -12,7 +12,6 @@ Distributed under the Boost Software License, Version 1.0.
 
 #include <boost/hana/config.hpp>
 #include <boost/hana/fwd/core/make.hpp>
-#include <boost/hana/fwd/core/operators.hpp>
 #include <boost/hana/fwd/integral_constant.hpp>
 
 

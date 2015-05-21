@@ -40,6 +40,11 @@ namespace boost { namespace hana {
         >>
         constexpr decltype(auto) operator*(X&& x, Y&& y)
         { return hana::mult(static_cast<X&&>(x), static_cast<Y&&>(y)); }
+
+        template <>
+        struct of<Ring>
+            : operators::of<decltype(mult)>
+        { };
     }
 
     //////////////////////////////////////////////////////////////////////////

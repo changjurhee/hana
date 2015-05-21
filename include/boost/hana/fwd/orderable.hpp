@@ -15,7 +15,6 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/fwd/core/datatype.hpp>
 #include <boost/hana/fwd/core/default.hpp>
 #include <boost/hana/fwd/core/models.hpp>
-#include <boost/hana/fwd/core/operators.hpp>
 
 
 namespace boost { namespace hana {
@@ -560,14 +559,6 @@ namespace boost { namespace hana {
 
     constexpr detail::create<_ordering> ordering{};
 #endif
-
-    namespace operators {
-        template <>
-        struct of<Orderable>
-            : decltype(less), decltype(less_equal),
-              decltype(greater), decltype(greater_equal)
-        { };
-    }
 }} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_ORDERABLE_HPP

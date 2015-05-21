@@ -46,6 +46,11 @@ namespace boost { namespace hana {
         >>
         constexpr decltype(auto) operator-(X&& x)
         { return hana::negate(static_cast<X&&>(x)); }
+
+        template <>
+        struct of<Group>
+            : operators::of<decltype(minus)>, operators::of<decltype(negate)>
+        { };
     }
 
     //////////////////////////////////////////////////////////////////////////

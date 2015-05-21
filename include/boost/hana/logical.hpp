@@ -21,6 +21,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/core/operators.hpp>
 #include <boost/hana/core/when.hpp>
 #include <boost/hana/detail/canonical_constant.hpp>
+#include <boost/hana/detail/eval_base.hpp>
 #include <boost/hana/detail/std/declval.hpp>
 #include <boost/hana/detail/std/enable_if.hpp>
 #include <boost/hana/detail/std/integral_constant.hpp>
@@ -28,7 +29,6 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/functional/always.hpp>
 #include <boost/hana/functional/compose.hpp>
 #include <boost/hana/functional/id.hpp>
-#include <boost/hana/lazy.hpp>
 
 
 namespace boost { namespace hana {
@@ -55,6 +55,12 @@ namespace boost { namespace hana {
         >>
         constexpr decltype(auto) operator!(X&& x)
         { return hana::not_(static_cast<X&&>(x)); }
+
+        template <>
+        struct of<Logical>
+            : operators::of<decltype(and_)>, operators::of<decltype(or_)>,
+              operators::of<decltype(not_)>
+        { };
     }
 
     //////////////////////////////////////////////////////////////////////////

@@ -12,6 +12,7 @@ Distributed under the Boost Software License, Version 1.0.
 
 #include <boost/hana/fwd/core/operators.hpp>
 
+#include <boost/hana/detail/std/void_t.hpp>
 #include <boost/hana/fwd/bool.hpp>
 
 
@@ -26,9 +27,9 @@ namespace boost { namespace hana {
         };
 
         template <typename Concept>
-        struct check_nested<Concept, decltype((void)(
-            typename Concept::hana::operators{}
-        ))> {
+        struct check_nested<Concept, detail::std::void_t<
+            typename Concept::hana::operators
+        >> {
             using type = typename Concept::hana::operators;
         };
     }
@@ -54,7 +55,7 @@ namespace boost { namespace hana {
 
     template <typename Datatype, typename Method>
     struct _has_operator<Datatype, Method, decltype((void)(
-        static_cast<Method>(operators::of<Datatype>{})
+        static_cast<operators::of<Method>>(operators::of<Datatype>{})
     ))>
         : _integral_constant<bool, true>
     { };

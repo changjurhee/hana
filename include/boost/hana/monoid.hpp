@@ -38,6 +38,11 @@ namespace boost { namespace hana {
         >>
         constexpr decltype(auto) operator+(X&& x, Y&& y)
         { return hana::plus(static_cast<X&&>(x), static_cast<Y&&>(y)); }
+
+        template <>
+        struct of<Monoid>
+            : operators::of<decltype(plus)>
+        { };
     }
 
     //////////////////////////////////////////////////////////////////////////

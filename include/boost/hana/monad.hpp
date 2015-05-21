@@ -38,6 +38,11 @@ namespace boost { namespace hana {
         >>
         constexpr decltype(auto) operator|(Xs&& xs, F&& f)
         { return hana::chain(static_cast<Xs&&>(xs), static_cast<F&&>(f)); }
+
+        template <>
+        struct of<Monad>
+            : operators::of<decltype(chain)>
+        { };
     }
 
     //////////////////////////////////////////////////////////////////////////

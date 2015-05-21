@@ -9,6 +9,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/assert.hpp>
 #include <boost/hana/comparable.hpp>
 #include <boost/hana/config.hpp>
+#include <boost/hana/core/operators.hpp>
 #include <boost/hana/functional/compose.hpp>
 #include <boost/hana/tuple.hpp>
 
@@ -243,6 +244,8 @@ int main() {
                 lazy(lazy(ct_eq<1>{}))
             ));
         }
+
+        static_assert(has_operator<Lazy, decltype(chain)>, "");
 
         // laws
         test::TestMonad<Lazy>{eqs, nested};

@@ -14,7 +14,6 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/fwd/core/datatype.hpp>
 #include <boost/hana/fwd/core/default.hpp>
 #include <boost/hana/fwd/core/models.hpp>
-#include <boost/hana/fwd/core/operators.hpp>
 
 
 namespace boost { namespace hana {
@@ -256,13 +255,6 @@ namespace boost { namespace hana {
 
     constexpr _power power{};
 #endif
-
-    namespace operators {
-        template <>
-        struct of<Ring>
-            : decltype(mult)
-        { };
-    }
 }} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_RING_HPP

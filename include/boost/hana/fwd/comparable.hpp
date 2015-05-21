@@ -12,7 +12,6 @@ Distributed under the Boost Software License, Version 1.0.
 
 #include <boost/hana/detail/create.hpp>
 #include <boost/hana/fwd/core/datatype.hpp>
-#include <boost/hana/fwd/core/operators.hpp>
 
 
 namespace boost { namespace hana {
@@ -345,13 +344,6 @@ namespace boost { namespace hana {
 
     constexpr detail::create<_comparing> comparing{};
 #endif
-
-    namespace operators {
-        template <>
-        struct of<Comparable>
-            : decltype(equal), decltype(not_equal)
-        { };
-    }
 }} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_COMPARABLE_HPP

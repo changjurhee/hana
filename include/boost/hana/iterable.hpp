@@ -70,6 +70,11 @@ namespace boost { namespace hana {
                 );
             }
         };
+
+        template <>
+        struct of<Iterable>
+            : operators::of<decltype(at)>
+        { };
     }
 
     //////////////////////////////////////////////////////////////////////////
