@@ -85,7 +85,7 @@ def measure(aspect, template_relative, range)
   template = Pathname.new(template_relative).expand_path
   range = range.to_a
 
-  if ENV["check.benchmarks"] && range.length >= 2
+  if ENV["BOOST_HANA_CHECK_BENCHMARKS"] && range.length >= 2
     range = [range[0], range[-1]]
   end
 
@@ -107,11 +107,11 @@ def measure(aspect, template_relative, range)
     # Compile the file and get timing statistics. The timing statistics
     # are output to stdout when we compile the file because of the way
     # the `compile.benchmark.measure` CMake target is setup.
-    stdout, stderr, status = make["compile.benchmark.measure"]
+    stdout, stderr, status = make["benchmark.measure.compilation"]
     raise "compilation error: #{stderr}\n\n#{code}" if not status.success?
     ctime = stdout.match(/\[compilation time: (.+)\]/i)
     # Size of the generated executable in KB
-    size = File.size("@CMAKE_CURRENT_BINARY_DIR@/compile.benchmark.measure").to_f / 1000
+    size = File.size("@CMAKE_CURRENT_BINARY_DIR@/benchmark.measure.compilation").to_f / 1000
 
     # If we didn't match anything, that's because we went too fast, CMake
     # did not have the time to see the changes to the measure file and
@@ -125,7 +125,7 @@ def measure(aspect, template_relative, range)
     # should be written to stdout by the `measure` function of the
     # `measure.hpp` header.
     if aspect == :execution_time
-      stdout, stderr, status = make["run.benchmark.measure"]
+      stdout, stderr, status = make["benchmark.measure.runtime"]
       raise "runtime error: #{stderr}\n\n#{code}" if not status.success?
       match = stdout.match(/\[execution time: (.+)\]/i)
       if match.nil?
