@@ -37,7 +37,8 @@ matrix:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.6
 
-    - env: CLANG_VERSION=3.6 BOOST_VERSION=1.58.0 UNIT_TESTS=true
+    # We also measure coverage here
+    - env: CLANG_VERSION=3.6 BOOST_VERSION=1.58.0 UNIT_TESTS=true COVERAGE=true BUILD_TYPE=Debug
       addons: *clang36
 
     - env: CLANG_VERSION=3.6 BOOST_VERSION=trunk UNIT_TESTS=true
@@ -151,7 +152,7 @@ before_script:
   # Setup the build directory
   - mkdir build
   - cd build
-  - cmake .. -DCMAKE_CXX_COMPILER=clang++-${CLANG_VERSION} -DBOOST_ROOT=${DEPS_DIR}/boost -DLIBCXX_ROOT=${DEPS_DIR}/libcxx/build -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DBOOST_HANA_ENABLE_MEMCHECK=ON
+  - cmake .. -DCMAKE_CXX_COMPILER=clang++-${CLANG_VERSION} -DBOOST_ROOT=${DEPS_DIR}/boost -DLIBCXX_ROOT=${DEPS_DIR}/libcxx/build -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DBOOST_HANA_ENABLE_MEMCHECK=ON -DBOOST_HANA_ENABLE_COVERAGE=${COVERAGE}
 
 
 script:
@@ -176,6 +177,10 @@ script:
   - if [[ "${UNIT_TESTS}" == "true" ]]; then make headers examples -k -j2 &>/dev/null; fi
   - if [[ "${UNIT_TESTS}" == "true" ]]; then make -k; fi
   - if [[ "${UNIT_TESTS}" == "true" ]]; then ctest --output-on-failure; fi
+
+
+after_success:
+  - if [[ "${COVERAGE}" == "true" ]]; then echo "TODO: upload coverage data to Coveralls"; fi
 
 
 notifications:

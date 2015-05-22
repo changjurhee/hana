@@ -19,6 +19,7 @@ option(BOOST_HANA_ENABLE_PEDANTIC "Compile with pedantic enabled." ON)
 option(BOOST_HANA_ENABLE_WERROR   "Fail and stop if a warning is triggered." OFF)
 option(BOOST_HANA_ENABLE_LIBCXX   "Use the -stdlib=libc++ if the compiler supports it." ON)
 option(BOOST_HANA_ENABLE_MEMCHECK "Run the unit tests and examples under Valgrind if it is found" OFF)
+option(BOOST_HANA_ENABLE_COVERAGE "Enable code coverage measurement in the unit tests. Requires CMAKE_BUILD_TYPE=Debug" OFF)
 
 
 ##############################################################################
@@ -53,6 +54,16 @@ endif()
 
 if (BOOST_HANA_ENABLE_LIBCXX)
     boost_hana_append_flag(BOOST_HANA_HAS_STDLIB_LIBCXX -stdlib=libc++)
+endif()
+
+if (BOOST_HANA_ENABLE_COVERAGE)
+    if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+        message(FATAL_ERROR "Code coverage requires CMAKE_BUILD_TYPE=Debug.")
+    endif()
+    # TODO:
+    # - Make sure the compiler supports that option.
+    # - Make sure we're not missing some linker flags.
+    add_compile_options(--coverage)
 endif()
 
 
