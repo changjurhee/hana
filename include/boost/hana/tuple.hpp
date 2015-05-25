@@ -998,9 +998,11 @@ namespace boost { namespace hana {
 
     namespace tuple_detail {
         template <detail::std::size_t N>
-        constexpr auto permutation_indices =
-            detail::constexpr_::array<detail::std::size_t, N>{}.iota(0)
-                                                               .permutations();
+        constexpr auto permutation_indices() {
+            detail::constexpr_::array<detail::std::size_t, N> indices{};
+            return indices.iota(0).permutations();
+        }
+        #error "we must memoize this result"
     }
 
     template <>
@@ -1010,9 +1012,8 @@ namespace boost { namespace hana {
         template <Size n, typename Xs, Size ...i>
         static constexpr auto
         nth_permutation(Xs const& xs, detail::std::index_sequence<i...>) {
-            return hana::make<Tuple>(
-                detail::get<tuple_detail::permutation_indices<Xs::size>[n][i]>(xs)...
-            );
+            constexpr auto indices = tuple_detail::permutation_indices<Xs::size>();
+            return hana::make<Tuple>(detail::get<indices[n][i]>(xs)...);
         }
 
         template <typename Xs, Size ...n>

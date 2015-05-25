@@ -136,10 +136,8 @@ namespace boost { namespace hana { namespace detail { namespace constexpr_ {
 
     template <typename ForwardIter, typename T>
     constexpr void iota(ForwardIter first, ForwardIter last, T value) {
-        while (first != last) {
-            *first++ = value;
-            ++value;
-        }
+        while (first != last)
+            *first++ = value++;
     }
 
     template<class InputIt, class T>

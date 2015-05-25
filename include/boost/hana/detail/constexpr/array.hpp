@@ -44,10 +44,10 @@ namespace constexpr_ {
         constexpr detail::std::size_t size() const noexcept
         { return Size; }
 
-        constexpr T* begin() noexcept             { return elems_; }
-        constexpr T const* begin() const noexcept { return elems_; }
-        constexpr T* end() noexcept               { return elems_ + Size; }
-        constexpr T const* end() const noexcept   { return elems_ + Size; }
+        constexpr T* begin() noexcept             { return &elems_[0]; }
+        constexpr T const* begin() const noexcept { return &elems_[0]; }
+        constexpr T* end() noexcept               { return &elems_[Size]; }
+        constexpr T const* end() const noexcept   { return &elems_[Size]; }
 
         // Algorithms from constexpr/algorithm.hpp
         constexpr array reverse() const {
