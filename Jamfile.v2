@@ -1,0 +1,39 @@
+# Copyright Louis Dionne 2015
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE.md or copy at http://boost.org/LICENSE_1_0.txt)
+
+project boost/hana
+    : requirements
+
+    : usage-requirements
+
+    : # no source
+    ;
+
+make cmake :  : @cmake ;
+actions cmake {
+    mkdir -p build
+    cd build
+    cmake .. -DCMAKE_CXX_COMPILER=clang++-3.5 -DBOOST_ROOT=$(BOOST_ROOT) -DBOOST_HANA_ENABLE_WERROR=ON
+}
+
+make tests :  : @tests.build @tests.run ;
+actions tests.build {
+    cmake --build build --target tests
+}
+
+actions tests.run {
+    cmake --build build --target tests
+    cd build && ctest --output-on-failure -R test.+
+}
+
+
+make examples :  : @examples.build @examples.run ;
+actions examples.build {
+    cmake --build build --target examples
+}
+
+actions examples.run {
+    cmake --build build --target examples
+    cd build && ctest --output-on-failure -R example.+
+}
